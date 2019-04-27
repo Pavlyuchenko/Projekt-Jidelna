@@ -1,0 +1,373 @@
+{% extends "basic.html" %}
+{% block content %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="login-alert-{{ category }}" id="hide_alert">
+                {{ message }}
+                <button class="button_hide" onclick="hide_alert()">x</button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <button id="novy-prispevek-input" onclick="novy_prispevek()" name="fu" value="none">+ Nová recenze</button>
+    <div id="novy_prispevek" style="height: 0px; display: none;">
+        <button class="home-button" onclick="novy_prispevek_2()">x</button>
+        <div class="home-figure">
+            <figure>
+                <img class="recenze-img_1" src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" alt="Profilovka"/>
+                <figcaption class="img-text_1">{{ current_user.name }}</figcaption>
+            </figure>
+        </div>
+        <form method="POST" action="" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="recenze-nazev">
+            {{ form.title.label(class="recenze-name") }}<br />
+            {% if form.title.errors %}
+                {{ form.title(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="recenze-nazev-input">
+                    {{ form.title(class="recenze-title_2", type="text", placeholder="Název recenze") }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="recenze-obsah-2">
+            <span>Obsah</span>
+            {% if form.content.errors %}
+                {{ form.content(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.content.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="recenze-obsah-input">
+                    {{ form.content(class="recenze-obsah", placeholder="Obsah recenze...") }}
+                </div>
+                <small>Pro formátování textu můžeš použít HTML tagy. <a href="{{ url_for('.html') }}">Jak používat HTML tagy?</a></small>
+            {% endif %}
+        </div>
+        <div class="recenze-jidlo-div">
+            <span>Název jídla:</span>
+            <p style="font-size: 12px;">Prosím o napsání pouze hlavního chodu: česneková s kroupami (1,6,7,9); Vepřová krkovička pečená (1,9), vařené brambory, mrkev s hráškem (1,6,9), ovocné mléko (7) -> Vepřová krkovička pečená</p>
+            {% if form.content.errors %}
+                {{ form.content(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.content.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="recenze-jidlo-input">
+                    {{ form.jidlo(class="recenze-jidlo", placeholder="Název jídla...") }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="picture">
+            {{ form.picture.label(class="account-name-text") }}
+            {{ form.picture(class="lol") }}
+            <label for="picture" class="custom-file-upload">
+                Nahrát soubor
+                <input id="picture" name="picture" type="file"/>
+            </label>
+        </div>
+        <div>
+            {{ form.submit(class="recenze-submit") }}
+        </div>
+    </form>
+    </div>
+    <div class="home-recenze">
+        <div id="posts" style="margin-top: -2%;">
+            {% for post in posts.items %}
+                {% if post.author == current_user %}
+                    <a href="{{ url_for('.delete_post', post_id=post.id) }}" style="float: right; color: #F31431; margin: 5px;"><img class="gifec" width="25" height="25" src="{{ url_for('static',  filename='bin.png') }}" alt="Smazat"></a>
+                {% endif %}
+                {% if post.author.obsidianUser == 1 %}
+                <div class="post-obsidian">
+                {% elif post.author.diamondUser == 1 %}
+                <div class="post-diamond">
+                {% elif post.author.platinumUser == 1 %}
+                <div class="post-platinum">
+                {% elif post.author.goldUser == 1 %}
+                <div class="post-gold">
+                {% elif post.author.silverUser == 1 %}
+                <div class="post-silver">
+                {% elif post.author.bronzeUser == 1 %}
+                <div class="post-bronze">
+                {% else %}
+                <div class="post">
+                {% endif %}
+                    <div class="home-figure">
+                        <img class="recenze-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}" alt="Profilovka"/>
+                    </div>
+                    {% if post.author.obsidianUser == 1 %}
+                        <p class="date">Obsidiánová úroveň (Admin)</p>
+                    {% elif post.author.diamondUser == 1 %}
+                        <p class="date">Diamantová úroveň</p>
+                    {% elif post.author.platinumUser == 1 %}
+                        <p class="date">Platinová úroveň</p>
+                    {% elif post.author.goldUser == 1 %}
+                        <p class="date">Zlatá úroveň</p>
+                    {% elif post.author.silverUser == 1 %}
+                        <p class="date">Stříbrná úroveň</p>
+                    {% elif post.author.bronzeUser == 1 %}
+                        <p class="date">Bronzová úroveň</p>
+                    {% endif %}
+                    <p class="author">{{ post.author.name }}</p>
+                    <p class="date">{{ post.date_posted.strftime('%d.%m.%Y') }}, {{ post.date_posted.strftime('%H:%M') }}</p>
+                    <p class="date">Jídlo: {{ post.jidlo }}</p>
+                    <img class="content-line" src="{{ url_for('static', filename='line.png')}}" alt="Čára">
+                    <div class="post-content">
+                        <h2 class="recenze-title">{{ post.title }}</h2>
+                        <img style="float:right;" class="recenze-img-jidlo" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="Profilovka"/>
+                        <p class="recenze-content">{{ post.content|safe }}</p>
+                        <div class="recenze-hodnoceni">
+                            <div class="emojis">
+                                <!--Like-->
+                                {% if current_user.has_liked_post(post) %}
+                                    <div class="dropup">
+                                        <a class="dropbtn" href="{{ url_for('like_action', post_id=post.id, action='unlike') }}"><div class="emoji blue" style="border-radius: 50px 0px 0px 50px;"><img src="{{ url_for('static', filename='like.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.likes.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Like</h6>
+                                            {% for foo in post.likes %}
+                                                {% if current_user.name != foo.likeAuthor.name %}
+                                                    <p>{{ foo.likeAuthor.name }}</p>
+                                                {% else %}
+                                                    <p>Vy</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="dropup">
+                                        <a class="dropbtn" href="{{ url_for('like_action', post_id=post.id, action='like') }}"><div class="emoji" style="border-radius: 50px 0px 0px 50px;"><img src="{{ url_for('static', filename='like.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.likes.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Like</h6>
+                                            {% for foo in post.likes %}
+                                                <p>{{ foo.likeAuthor.name }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <!--Love-->
+                                {% if current_user.has_loved_post(post) %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('love_action', post_id=post.id, action='unlove') }}"><div class="emoji red"><img src="{{ url_for('static', filename='dislike.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.loves.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Dislike</h6>
+                                            {% for foo in post.loves %}
+                                                {% if current_user.name != foo.loveAuthor.name %}
+                                                    <p>{{ foo.loveAuthor.name }}</p>
+                                                {% else %}
+                                                    <p>Vy</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('love_action', post_id=post.id, action='love') }}"><div class="emoji"><img src="{{ url_for('static', filename='dislike.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.loves.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Dislike</h6>
+                                            {% for foo in post.loves %}
+                                                <p>{{ foo.loveAuthor.name }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <!--Confused-->
+                                {% if current_user.has_confused_post(post) %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('confuse_action', post_id=post.id, action='unconfuse') }}"><div class="emoji yellow-green"><img src="{{ url_for('static', filename='vomit.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.confuses.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Fuj!</h6>
+                                            {% for foo in post.confuses %}
+                                                {% if current_user.name != foo.confusedAuthor.name %}
+                                                    <p>{{ foo.confusedAuthor.name }}</p>
+                                                {% else %}
+                                                    <p>Vy</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('confuse_action', post_id=post.id, action='confuse') }}"><div class="emoji"><img src="{{ url_for('static', filename='vomit.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.confuses.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Fuj!</h6>
+                                            {% for foo in post.confuses %}
+                                                <p>{{ foo.confusedAuthor.name }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <!--Angry-->
+                                {% if current_user.has_angry_post(post) %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('angry_action', post_id=post.id, action='unangry') }}"><div class="emoji red-red"><img src="{{ url_for('static', filename='angry.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.angry.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Naštvaní</h6>
+                                            {% for foo in post.angry %}
+                                                {% if current_user.name != foo.angryAuthor.name %}
+                                                    <p>{{ foo.angryAuthor.name }}</p>
+                                                {% else %}
+                                                    <p>Vy</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('angry_action', post_id=post.id, action='angry') }}"><div class="emoji"><img src="{{ url_for('static', filename='angry.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.angry.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Naštvaní</h6>
+                                            {% for foo in post.angry %}
+                                                <p>{{ foo.angryAuthor.name }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <!--Surprised-->
+                                {% if current_user.has_surprise_post(post) %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('surprise_action', post_id=post.id, action='unsurprise') }}"><div class="emoji yellow-black"><img src="{{ url_for('static', filename='surprised.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Překvapení</h6>
+                                            {% for foo in post.surprise %}
+                                                {% if current_user.name != foo.surprisedAuthor.name %}
+                                                    <p>{{ foo.surprisedAuthor.name }}</p>
+                                                {% else %}
+                                                    <p>Vy</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('surprise_action', post_id=post.id, action='surprise') }}"><div class="emoji"><img src="{{ url_for('static', filename='surprised.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Překvapení</h6>
+                                            {% for foo in post.surprise %}
+                                                <p>{{ foo.surprisedAuthor.name }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <!--Sad-->
+                                {% if current_user.has_sad_post(post) %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('sad_action', post_id=post.id, action='unsad') }}"><div class="emoji yellow-blue"><img src="{{ url_for('static', filename='sad.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Smutní</h6>
+                                            {% for foo in post.sad %}
+                                                {% if current_user.name != foo.sadAuthor.name %}
+                                                    <p>{{ foo.sadAuthor.name }}</p>
+                                                {% else %}
+                                                    <p>Vy</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('sad_action', post_id=post.id, action='sad') }}"><div class="emoji"><img src="{{ url_for('static', filename='sad.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Smutní</h6>
+                                            {% for foo in post.sad %}
+                                                <p>{{ foo.sadAuthor.name }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <!--Laugh-->
+                                {% if current_user.has_laugh_post(post) %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('laugh_action', post_id=post.id, action='unlaugh') }}"><div class="emoji yellow-blue" style="border-radius: 0px 50px 50px 0px;"><img src="{{ url_for('static', filename='haha.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.laugh.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Haha!</h6>
+                                            {% for foo in post.laugh %}
+                                                {% if current_user.name != foo.laughAuthor.name %}
+                                                    <p>{{ foo.laughAuthor.name }}</p>
+                                                {% else %}
+                                                    <p>Vy</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('laugh_action', post_id=post.id, action='laugh') }}"><div class="emoji" style="border-radius: 0px 50px 50px 0px;"><img src="{{ url_for('static', filename='haha.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.laugh.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Haha!</h6>
+                                            {% for foo in post.laugh %}
+                                                <p>{{ foo.laughAuthor.name }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="new-comment">
+                        <form method="POST" action="{{ url_for('.comment', post_id=post.id) }}">
+                            {{ form.hidden_tag() }}
+                            <div class="new-comment-body">
+                                {% if commentForm.content.errors %}
+                                    {{ commentForm.content() }}
+                                    <div class="invalid-feedback">
+                                        {% for error in commentForm.content.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                        <img class="new-comment-photo" src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" alt="Profilovka"/>
+                                        {{ commentForm.content(class="new-comment-text", type="text", placeholder="Napiš komentář...", autocomplete="off") }}
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                    <div class="comments">
+                        {% for com in comments %}
+                            {% if com.post_id == post.id %}
+                                <div class="comment-body">
+                                    <img class="comment-photo" src="{{ url_for('static', filename='profile_pics/' + com.author.image_file) }}" alt="Profilovka"/>
+                                    <div class="comment-text">
+                                        {% if current_user == com.author %}
+                                            <span class="comment-p"><span style="color: #19A7D8; font-size: 16px; margin-left: -10px;">Vy&nbsp;</span> {{ com.body }}</span>
+                                        {% else %}
+                                            <span class="comment-p"><span style="color: #19A7D8; font-size: 16px; margin-left: -10px;">{{ com.author.name }}&nbsp;</span> {{ com.body }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if current_user == com.author %}
+                                        <span><a style="color: red; font-size: 13px;" href="{{ url_for('.delete_comment', comment_id=com.id) }}">&nbsp; <img class="gifec" width="15" height="15" src="{{ url_for('static',  filename='bin.png') }}" alt="Smazat"></a></span>
+                                    {% endif %}
+                                    <p class="comment-date" style="font-size: 12px; color: #cccccc;">{{ com.date_posted.strftime('%d.%m.%Y') }}, {{ com.date_posted.strftime('%H:%M') }}</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="flexbox">
+    <div class="pagination">
+        {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}
+                {% if posts.page == page_num %}
+                    <a style="color: #F31431">{{ page_num }}</a>
+                {% else %}
+                    <a href="{{ url_for('.recenze', page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+                <span>...</span>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,193 @@
+::-webkit-input-placeholder{color:#19A7D8; font-size: 1vw; line-height:30px;}   ::-moz-placeholder{color:#19A7D8;font-size: 1vw; line-height:30px;}   ::-ms-placeholder{color:#19A7D8;font-size: 1vw; line-height:30px;}   ::placeholder{color:#19A7D8;font-size: 1vw; line-height:30px;}input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus,input:-webkit-autofill:active{-webkit-box-shadow: 0 0 0 30px white inset !important;}input:-webkit-autofill {-webkit-text-fill-color: #19A7D8; !important;}
+
+
+.register{
+    margin-left: 37.5%;
+    margin-top: 1.5%;
+    width: 25%;
+    border-radius: 3px;
+    background-color: #19A7D8;
+    padding-bottom: 0.5%;
+}
+
+.register-h3{
+    font-weight: 400;
+    font-size: 1.5vw;
+    color: #FFFFFF;
+    padding: 8%;
+    padding-top: 4%;
+    padding-bottom: 0px;
+    margin: 0px;
+}
+
+.register-line{
+    height: 2px;
+    width: 92%;
+    margin-left: 4%;
+    margin-top: 2%;
+    margin-bottom: 7%;
+}
+
+.register-name{
+    color: #FFFFFF;
+    font-size: 1vw;
+    font-weight: 400;
+    margin-left: 10%;
+}
+
+.register-name-div{
+    margin-bottom: -4%;
+}
+
+.register-email{
+    color: #FFFFFF;
+    font-size: 1vw;
+    font-weight: 400;
+    margin-left: 10%;
+}
+
+.register-email-div{
+    margin-bottom: -4%;
+}
+
+.register-jidelna{
+    color: #FFFFFF;
+    font-size: 1vw;
+    font-weight: 400;
+    margin-left: 10%;
+}
+
+.register-jidelna-div{
+    margin-bottom: -4%;
+}
+
+.register-jidelna_heslo{
+    color: #FFFFFF;
+    font-size: 1vw;
+    font-weight: 400;
+    margin-left: 10%;
+}
+
+.register-jidelna_heslo-div{
+    margin-bottom: -4%;
+}
+
+.register-password{
+    color: #FFFFFF;
+    font-size: 1vw;
+    font-weight: 400;
+    margin-left: 10%;
+}
+
+
+.effect-10{
+    border: 0;
+    padding: 1.5% 2%;
+    position: relative;
+    background: #FFFFFF;
+    height: 30px;
+    width: 75%;
+    margin-left: 10%;
+    transition: 0.3s;
+}
+.effect-10:hover{
+    background-color: #cccccc;
+}
+
+input{
+    color: #19A7D8;
+    font-size: 1vw;
+}
+
+
+input[type=submit] {
+  width: 35%;
+  background-color: #FFFFFF;
+  color: #19A7D8;
+  padding: 1.5% 5%;
+  margin-left: 54%;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  border: 0px;
+  margin-bottom: %;
+  transition: 0.3s;
+}
+
+input[type=submit]:hover {
+  background-color: #19A7D8;
+  color: #FFFFFF;
+}
+
+input[type=submit]:focus {
+  background-color: #FFFFFF;
+}
+
+.register-span{
+    margin: 3%;
+    font-size: .6vw;
+    color: #FFFFFF;
+}
+.register-span a{
+    font-size: .6vw;
+    color: #FFFFFF;
+    font-weight: 700;
+    text-decoration: none;
+}
+.register-span a:hover{
+    text-decoration: underline;
+}
+
+.register-alert-danger{
+    font-size: .9vw;
+    background-color: #F31431;
+    color: #FFFFFF;
+    padding: 2%;
+}
+
+.register-alert-success{
+    font-size: 1vw;
+    background-color: #43A047;
+    color: #FFFFFF;
+    padding: 2%;
+}
+
+.val-error{
+    border: 0;
+    padding: 1.5% 2%;
+    position: relative;
+    background: #EF5350;
+    height: 30px;
+    width: 75%;
+    margin-left: 10%;
+    transition: 0.3s;
+    color: #FFFFFF;
+}
+
+.val-error:hover{
+    background-color: #C44441;
+    color: #cccccc;
+}
+
+.error-p{
+    margin: 0;
+    padding: 0px;
+    margin-left: 10%;
+    margin-top: 1px;
+    font-size: 0.8vw;
+    color: #C62828;
+}
+
+.mb-10{
+    margin-bottom: 8%;
+}
+
+.vlna{
+    width: 100%;
+    height: 25%;
+    padding: 0;
+    margin: 0;
+    left: 0%;
+    float: bottom;
+    position: absolute;
+}

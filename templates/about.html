@@ -1,0 +1,12 @@
+{% extends "basic.html" %}
+{% block content %}
+    <div class="dva-divy">
+        <h2 class="kontakt-h2">Kontakt</h2>
+        <div class="kontakt">
+            <h4 class="kontakt-h4">Máš nějaký nápad na zlepšení? Neboj se napsat!</h4>
+            <p class="kontakt-content">Zde je naše emailová adresa, můžeš nám napsat kdykoliv chceš :-)</p>
+            <a class="kontakt-a" target="_blank" href="https://mail.google.com/mail/?view=cm&fs=1&to=projektjidelna@gmail.com">projektjidelna@gmail.com</a>
+        </div>
+    </div>
+<img class="vlna" src="{{ url_for('static', filename='vlna.png')}}" alt="Vlna">
+{% endblock %}

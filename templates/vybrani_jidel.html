@@ -1,0 +1,156 @@
+{% extends "basic.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="login-alert-{{ category }}" id="hide_alert">
+                {{ message }}
+                <button class="button_hide" onclick="hide_alert()">x</button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<div style="display:none;" class="login-alert-info" id="hide_alert-info">
+    Tvoje obědy se ukládají. Chvilku strpení prosím.
+    <button class="button_hide_info" onclick="hide_alert_info()">x</button>
+</div>
+<div class="jidla">
+    <h2 class="jidla-h2">Výběr jídel:</h2>
+    <img class="jidla-content-line" src="{{ url_for('static', filename='line_white.png')}}" alt="Čára">
+    {% if not meals %}
+        <p class="jidla-error">Jídelně nejspíš spadly servery. Amatéři.</p>
+    {% else %}
+        {% set count = namespace(a=cas) %}
+        {% if current_user.icanteen != "" and current_user.icanteen_heslo != "" and vybrane_jidla_mesic != [] %}
+            <form method="POST" action="{{ url_for('.vyber_jidel') }}">
+                <div class="jidla-submit">
+                    <input class="order" type="submit" value="Uložit" onclick="showWaitingForLunch()"><br />
+                    <small>Ukládání obědů může trvat až 30 sekund. Prosíme o chvilku strpení.</small>
+                </div>
+            {% for jidlo in meals %}
+                {% if not jidlo.startswith("A") and not jidlo.startswith("B") and not jidlo.startswith("C")  %}
+                    <h3>{{ jidlo }}</h3>
+                    {% set count.a = count.a + 1 %}
+                    </fieldset>
+                    <fieldset id="group{{ count.a }}">
+                          <label for="{{ jidlo }}">
+                              <div class="jidlo-div">
+                                  <label class="container">
+                                    <input value="4" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Odhlásit</span>
+                                    <span class="checkmark"></span>
+                                  </label>
+                                  <p>Odhlásit oběd</p>
+                                  <p>&nbsp;</p>
+                                  <img class="no-jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř">
+                              </div>
+                          </label>
+                {% endif %}
+                    {% if jidlo.startswith("A") %}
+                        {% if vybrane_jidla_mesic[count.a] == 1 %}
+                            <label for="{{ jidlo }}">
+                            <div class="jidlo-div-green">
+                            <label class="container">
+                                <input value="1" type="radio" id="{{ jidlo }}" name="group{{ count.a }}" checked="checked"><span class="nadpis">Oběd 1</span>
+                                <span class="checkmark"></span>
+                            </label>
+                        {% else %}
+                            <label for="{{ jidlo }}">
+                            <div class="jidlo-div">
+                            <label class="container">
+                                <input value="1" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Oběd 1</span>
+                                <span class="checkmark"></span>
+                            </label>
+                        {% endif %}
+                            <p>{{ jidlo[1:] }}</p>
+                            {% set foo = [] %}
+                            {% for post in posts %}
+                                {% if not foo and post.jidlo.lower() in jidlo.lower() %}
+                                    {% if foo.append(True) %} {% endif %}
+                                    <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}" title="{{ post.jidlo }}"/>
+                                    <a style="color: #898989;" href="{{ url_for('.search', search=post.jidlo) }}"><p style="font-size: 10px;">Obrázek: {{ post.jidlo }}</p></a>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not foo %}
+                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř">
+                            {% endif %}
+                            </div>
+                            </label>
+                    {% elif jidlo.startswith("B") %}
+                        {% if vybrane_jidla_mesic[count.a] == 2 %}
+                            <label for="{{ jidlo }}">
+                            <div class="jidlo-div-green">
+                                <label class="container">
+                                    <input value="2" type="radio" id="{{ jidlo }}" name="group{{ count.a }}" checked="checked"><span class="nadpis">Oběd 2</span>
+                                    <span class="checkmark"></span>
+                                </label>
+                        {% else %}
+                            <label for="{{ jidlo }}">
+                            <div class="jidlo-div">
+                                <label class="container">
+                                    <input value="2" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Oběd 2</span>
+                                    <span class="checkmark"></span>
+                                </label>
+                        {% endif %}
+                            <p>{{ jidlo[1:] }}</p>
+                            {% set foo = [] %}
+                            {% for post in posts %}
+                                {% if not foo and post.jidlo.lower() in jidlo.lower() %}
+                                    {% if foo.append(True) %} {% endif %}
+                                        <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}"  title="{{ post.jidlo }}"/>
+                                        <a style="color: #898989;" href="{{ url_for('.search', search=post.jidlo) }}"><p style="font-size: 10px;">Obrázek: {{ post.jidlo }}</p></a>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not foo %}
+                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř">
+                            {% endif %}
+                        </div>
+                        </label>
+                    {% elif jidlo.startswith("C") %}
+                        {% if vybrane_jidla_mesic[count.a] == 3 %}
+                            <label for="{{ jidlo }}">
+                            <div class="jidlo-div-green">
+                                <label class="container">
+                                    <input value="3" type="radio" id="{{ jidlo }}" name="group{{ count.a }}" checked="checked"><span class="nadpis">Oběd 3</span>
+                                    <span class="checkmark"></span>
+                                </label>
+                        {% else %}
+                            <label for="{{ jidlo }}">
+                            <div class="jidlo-div">
+                                <label class="container">
+                                    <input value="3" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Oběd 3</span>
+                                    <span class="checkmark"></span>
+                                </label>
+                        {% endif %}
+                            <p>{{ jidlo[1:] }}</p>
+                            {% set foo = [] %}
+                            {% for post in posts %}
+                                {% if not foo and post.jidlo.lower() in jidlo.lower() %}
+                                    {% if foo.append(True) %} {% endif %}
+                                        <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}" title="{{ post.jidlo }}"/>
+                                        <a style="color: #898989;" href="{{ url_for('.search', search=post.jidlo) }}"><p style="font-size: 10px;">Obrázek: {{ post.jidlo }}</p></a>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not foo %}
+                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř">
+                            {% endif %}
+                        </div>
+                        </label>
+                    {% endif %}
+            {% endfor %}
+                <div class="jidla-submit">
+                    <input class="order" type="submit" value="Uložit" onclick="showWaitingForLunch_2()"><br />
+                    <small>Ukládání obědů může trvat až 30 sekund. Prosíme o chvilku strpení.</small>
+                </div>
+            </form>
+        {% else %}
+            <a href="{{ url_for('.account') }}"><h3>Pro zobrazení obědů zadej svoje iCanteen a heslo do iCanteen</h3></a>
+        {% endif %}
+    {% endif %}
+</div>
+<div style="display:none;" class="login-alert-info_2" id="hide_alert-info_2">
+    Tvoje obědy se ukládají. Chvilku strpení prosím.
+    <button class="button_hide_info" onclick="hide_alert_info_2()">x</button>
+</div>
+
+<img class="vlna" src="{{ url_for('static', filename='vlna.png')}}" alt="Vlna">
+{% endblock %}

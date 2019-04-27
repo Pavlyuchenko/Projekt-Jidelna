@@ -1,0 +1,123 @@
+{% extends "basic.html" %}
+{% block content %}
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div class="register">
+        <h3 class="register-h3">Zaregistruj se!</h3>
+        <img class="register-line" src="{{ url_for('static', filename='line_white.png')}}" alt="Čára">
+        <div class="register-jidelna_heslo-div">
+            {{ form.trida.label(class="register-jidelna_heslo") }}
+            {% if form.trida.errors %}
+                {% for error in form.trida.errors %}
+                    <div class="mb-10">
+                        {{ form.trida(class="val-error", type="password", placeholder="iCanteen heslo") }}
+                        <p class="error-p">{{ error }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+            <div class="col-3" style="margin-bottom: 10%;">
+                {{ form.trida(class="effect-10", placeholder="Třída") }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="register-name-div">
+            {{ form.name.label(class="register-name") }}
+            {% if form.name.errors %}
+                {% for error in form.name.errors %}
+                    <div class="mb-10">
+                        {{ form.name(class="val-error", type="text", placeholder="Přezdívka") }}
+                        <p class="error-p">{{ error }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-3" style="margin-bottom: 10%;">
+                    {{ form.name(class="effect-10", type="text", placeholder="Přezdívka") }}
+
+                </div>
+            {% endif %}
+        </div>
+        <div class="register-email-div">
+            {{ form.email.label(class="register-email") }}
+            {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    <div class="mb-10">
+                        {{ form.email(class="val-error", type="text", placeholder="Email") }}
+                        <p class="error-p">{{ error }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="margin-bottom: 10%;">
+                    {{ form.email(class="effect-10", type="text", placeholder="Email") }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="register-jidelna-div">
+            {{ form.jidelna.label(class="register-jidelna") }}
+            {% if form.jidelna.errors %}
+                {% for error in form.jidelna.errors %}
+                    <div class="mb-10">
+                        {{ form.jidelna(class="val-error", type="text") }}
+                        <p class="error-p">{{ error }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+            <div class="col-3" style="margin-bottom: 10%;">
+                {{ form.jidelna(class="effect-10", type="text", placeholder="iCanteen") }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="register-jidelna_heslo-div">
+            {{ form.jidelna_heslo.label(class="register-jidelna_heslo") }}
+            {% if form.jidelna_heslo.errors %}
+                {% for error in form.jidelna_heslo.errors %}
+                    <div class="mb-10">
+                        {{ form.jidelna_heslo(class="val-error", type="password", placeholder="iCanteen heslo") }}
+                        <p class="error-p">{{ error }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+            <div class="col-3" style="margin-bottom: 10%;">
+                {{ form.jidelna_heslo(class="effect-10", type="password", placeholder="iCanteen heslo") }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="register-jidelna_heslo-div">
+            {{ form.real_name.label(class="register-jidelna_heslo") }}
+            {% if form.real_name.errors %}
+                {% for error in form.real_name.errors %}
+                    <div class="mb-10">
+                        {{ form.real_name(class="val-error", type="password", placeholder="Jméno") }}
+                        <p class="error-p">{{ error }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+            <div class="col-3" style="margin-bottom: 10%;">
+                {{ form.real_name(class="effect-10", type="text", placeholder="Jméno") }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="register-password-div">
+            {{ form.password.label(class="register-password") }}
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    <div class="mb-10">
+                        {{ form.password(class="val-error", type="password", placeholder="Heslo") }}
+                        <p class="error-p">{{ error }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+            <div class="col-3" style="margin-bottom: 10%;">
+                {{ form.password(class="effect-10", type="password", placeholder="Heslo") }}
+            </div>
+            {% endif %}
+        </div>
+        <div>
+            {{ form.submit() }}
+        </div>
+        <div>
+            <span class="register-span">Již máš účet? <a href="{{ url_for('login') }}">Přihlaš se!</a></span>
+        </div>
+    </div>
+</form>
+<img class="vlna" src="{{ url_for('static', filename='vlna.png')}}" alt="Vlna">
+{% endblock content %}

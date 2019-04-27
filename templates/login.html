@@ -1,0 +1,64 @@
+{% extends "basic.html" %}
+{% block content %}
+    <div class="login">
+        <div class="errors">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="login-alert-{{ category }}" id="hide_alert">
+                    {{ message }}
+                    <button class="button_hide" onclick="hide_alert()">x</button>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+        </div>
+        <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <h3 class="login-h3">Přihlášení</h3>
+        <img class="login-line" src="{{ url_for('static', filename='line_white.png')}}" alt="Čára">
+        <div class="login-name-div">
+            {{ form.name.label(class="login-name") }}<br />
+            {% if form.name.errors %}
+                {{ form.name(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.name.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="col-3" style="margin-bottom: 10%;">
+                    {{ form.name(class="effect-10", type="text", placeholder="Přezdívka") }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="login-password-div">
+            {{ form.password.label(class="login-password") }}
+            {% if form.password.errors %}
+                {{ form.password(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="col-3">
+                    {{ form.password(class="effect-10", type="password", placeholder="Heslo") }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="login-check">
+            <label class="container">Pamatovat si
+                {{ form.remember(class="form-check-input") }}
+                <span class="checkmark"></span>
+            </label>
+        </div>
+        <div class="login-submit">
+            {{ form.submit() }}
+        </div>
+        <span class="login-reset-password">Zapomněl jsi heslo? &nbsp;<a href="{{ url_for('reset_password') }}">Resetovat heslo</a></span>
+        <span class="login-register">Ještě nemáš účet? &nbsp;<a href="{{ url_for('register') }}">Zaregistruj se!</a></span>
+    </div>
+</form>
+<img class="vlna" src="{{ url_for('static', filename='vlna.png')}}" alt="Vlna">
+{% endblock content %}

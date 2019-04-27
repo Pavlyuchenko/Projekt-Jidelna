@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="cs">
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Roboto+Condensed" rel="stylesheet">
+        <meta http-equiv="refresh" content="1800">
+        <meta charset="UTF-8">
+        {% if title %}
+            <title>{{ title }}</title>
+        {% else %}
+            <title>Projekt Jídelna</title>
+        {% endif %}
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/basic.css') }}">
+        {% if link == "home" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/home.css') }}">
+        {% elif link == "login" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/login.css') }}">
+        {% elif link == "register" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/register.css') }}">
+        {% elif link == "account" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/account.css') }}">
+        {% elif link == "recenze" or link == "search" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/recenze.css') }}">
+        {% elif link == "about" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/about.css') }}">
+        {% elif link == "tutorial" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/tutorial.css') }}">
+        {% elif link == "jidla" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/jidla.css') }}">
+        {% elif link == "priznani" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/priznani.css') }}">
+        {% elif link == "hlasky" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/hlasky.css') }}">
+        {% endif %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+        $(document).ready(function(){
+          $("#novy-prispevek-input").click(function(){
+            $("#novy_prispevek").show();
+            $("#novy_prispevek").animate({height: "600px"});
+          });
+          $(".home-button").click(function(){
+            $("#novy_prispevek").animate({height: "0px"});
+            $("#novy_prispevek").hide();
+          });
+        });
+
+        function novy_prispevek() {
+            var x = document.getElementById("novy_prispevek");
+            var button = document.getElementById("novy-prispevek-input");
+            if (x.style.display === "none") {
+                button.style.borderRadius = "20px 20px 0px 0px";
+            }
+        }
+        function novy_prispevek_2() {
+            var x = document.getElementById("novy_prispevek");
+            var button = document.getElementById("novy-prispevek-input");
+            if (x.style.display !== "none") {
+                button.style.borderRadius = "25px";
+            }
+        }
+        function hide_alert() {
+            var x = document.getElementById("hide_alert");
+            x.style.display = "none";
+        }
+        function hide_alert_info() {
+            var x = document.getElementById("hide_alert-info");
+            x.style.display = "none";
+        }
+        function hide_alert_info_2() {
+            var x = document.getElementById("hide_alert-info_2");
+            x.style.display = "none";
+        }
+
+
+        $(document).ready(function()
+        {
+            $(".gifec").hover(
+                function()
+                {
+                    $(this).attr("src", "{{ url_for('static', filename='Bina.gif') }}");
+                },
+                function()
+                {
+                    $(this).attr("src", "{{ url_for('static', filename='bin.png') }}");
+                }
+            );
+        });
+
+        $(document).ready(function() {
+            $('input:radio[value=1]').change(function() {
+                $(this).parent("label").parent("div").addClass('jidlo-div-green');
+                $(this).parent("label").parent("div").removeClass('jidlo-div');
+                $(this).parent("label").parent("div").parent("label").siblings("label").children().removeClass("jidlo-div-green");
+                $(this).parent("label").parent("div").parent("label").siblings("label").children().addClass("jidlo-div");
+            });
+        });
+        $(document).ready(function() {
+            $('input:radio[value=2]').change(function() {
+                $(this).parent("label").parent("div").addClass('jidlo-div-green');
+                $(this).parent("label").parent("div").removeClass('jidlo-div');
+                $(this).parent("label").parent("div").parent("label").siblings("label").children().removeClass("jidlo-div-green");
+                $(this).parent("label").parent("div").parent("label").siblings("label").children().addClass("jidlo-div");
+            });
+        });
+        $(document).ready(function() {
+            $('input:radio[value=3]').change(function() {
+                $(this).parent("label").parent("div").addClass('jidlo-div-green');
+                $(this).parent("label").parent("div").removeClass('jidlo-div');
+                $(this).parent("label").parent("div").parent("label").siblings("label").children().removeClass("jidlo-div-green");
+                $(this).parent("label").parent("div").parent("label").siblings("label").children().addClass("jidlo-div");
+            });
+        });
+        $(document).ready(function() {
+            $('input:radio[value=4]').change(function() {
+                $(this).parent("label").parent("div").addClass('jidlo-div-green');
+                $(this).parent("label").parent("div").removeClass('jidlo-div');
+                $(this).parent("label").parent("div").parent("label").siblings("label").children().removeClass("jidlo-div-green");
+                $(this).parent("label").parent("div").parent("label").siblings("label").children().addClass("jidlo-div");
+            });
+        });
+
+        function showWaitingForLunch() {
+          var x = document.getElementById("hide_alert-info");
+          x.style.display = "block";
+        }
+
+        function showWaitingForLunch_2() {
+          var x = document.getElementById("hide_alert-info_2");
+          x.style.display = "block";
+        }
+        </script>
+    </head>
+    {% if current_user.diamondUser == 1 %}
+    <body style="background-color: #41daff">
+    {% else %}
+    <body>
+    {% endif %}
+        <div class="navbar">
+            <a href="{{ url_for('.home') }}"><img class="navbar-logo" src="{{ url_for('static', filename='logo.png')}}" alt="Projekt Jídelna"></a>
+            <a href="{{ url_for('.home') }}"><button class="navbar-main-buttons">Domů</button></a>
+            <a href="{{ url_for('.jidla') }}"><button class="navbar-main-buttons">Výběr jídel</button></a>
+            <a href="{{ url_for('.recenze') }}"><button class="navbar-main-buttons">Recenze</button></a>
+            <a href="{{ url_for('.priznani') }}"><button class="navbar-main-buttons">Přiznání</button></a>
+            <a href="{{ url_for('.hlasky') }}"><button class="navbar-main-buttons">Hlášky</button></a>
+            <a href="{{ url_for('.about') }}"><button class="navbar-main-buttons">Kontakt</button></a>
+            {% if current_user.is_authenticated %}
+                <a class="navbar-secondary-buttons" href="{{ url_for('.logout') }}">Odhlásit se</a>
+                <a class="navbar-secondary-buttons" href="{{ url_for('.account') }}">{{ current_user.name }}</a>
+            {% else %}
+                <a class="navbar-secondary-buttons" style="margin-right: 1%;" href="{{ url_for('.register') }}">Registrace</a>
+                <a class="navbar-secondary-buttons" href="{{ url_for('.login') }}">Přihlášení</a>
+            {% endif %}
+            <form action="search" method="GET">
+                <input class="search-bar" type="text" name="search" placeholder="Hledat jídlo..." autocomplete="off">
+            </form>
+        </div>
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>

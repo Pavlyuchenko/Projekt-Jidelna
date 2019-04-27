@@ -1,0 +1,245 @@
+::-webkit-input-placeholder{color:#19A7D8; font-size: 1vw; line-height:30px;}   ::-moz-placeholder{color:#19A7D8;font-size: 1vw; line-height:30px;}   ::-ms-placeholder{color:#19A7D8;font-size: 1vw; line-height:30px;}   ::placeholder{color:#19A7D8;font-size: 1vw; line-height:30px;}input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus,input:-webkit-autofill:active{-webkit-box-shadow: 0 0 0 30px white inset !important;}input:-webkit-autofill {-webkit-text-fill-color: #19A7D8; !important;}
+
+#hide{
+    float: right;
+    color: #FFFFFF
+}
+
+.login{
+    margin-left: 37.5%;
+    margin-top: 7%;
+    width: 25%;
+    background-color: #19A7D8;
+    padding-bottom: 0.5%;
+}
+
+.login-alert-danger{
+    font-size: .9vw;
+    background-color: #F31431;
+    color: #FFFFFF;
+    padding: 2%;
+}
+
+.login-alert-info{
+    font-size: .9vw;
+    background-color: #F31431;
+    color: #FFFFFF;
+    padding: 2%;
+}
+
+.login-alert-success{
+    font-size: 1vw;
+    background-color: #43A047;
+    color: #FFFFFF;
+    padding: 2%;
+}
+
+.button_hide {
+  float: right;
+  margin-top: -0.1%;
+  font-size: 20px;
+  width: 1%;
+  background-color:transparent;
+  color: #FFFFFF;
+  padding: 0 0;
+  margin-right: 2%;
+  border: none;
+  cursor: pointer;
+}
+
+
+.login-h3{
+    font-weight: 400;
+    font-size: 1.5vw;
+    color: #FFFFFF;
+    padding: 8%;
+    padding-top: 4%;
+    padding-bottom: 0px;
+    margin: 0px;
+}
+
+.login-line{
+    height: 2px;
+    width: 92%;
+    margin-left: 4%;
+    margin-top: 3%;
+    margin-bottom: 10%;
+}
+
+.login-name{
+    color: #FFFFFF;
+    font-size: 1vw;
+    font-weight: 400;
+    margin-left: 10%;
+    margin-top: 20%;
+}
+
+
+.effect-10{
+    border: 0;
+    padding: 1.5% 2%;
+    position: relative;
+    background: #FFFFFF;
+    height: 30px;
+    width: 75%;
+    margin-left: 10%;
+    transition: 0.3s;
+}
+.effect-10:hover{
+    background-color: #cccccc;
+}
+
+input{
+    color: #19A7D8;
+    font-size: 1vw;
+}
+
+.login-password{
+    color: #FFFFFF;
+    font-size: 1vw;
+    margin-left: 10%;
+}
+
+
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 7%;
+  margin-left: 10%;
+  margin-top: 7%;
+  margin-bottom: 2%;
+  cursor: pointer;
+  font-size: 1.2vw;
+  color: #FFFFFF;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  transition: .1s;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 92%;
+  width: 6%;
+  background-color: #eee;
+  transition: 0.1s;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #19A7D8;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.container:hover{
+    color: #cccccc;
+}
+
+input[type=submit] {
+  width: 25%;
+  background-color: #FFFFFF;
+  color: #19A7D8;
+  padding: 1.5% 5%;
+  margin-left: 64%;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  border: 0px;
+  margin-bottom: 5%;
+  transition: 0.3s;
+}
+
+input[type=submit]:hover {
+  background-color: #19A7D8;
+  color: #FFFFFF;
+}
+
+input[type=submit]:focus {
+  background-color: #FFFFFF;
+}
+
+.login-reset-password{
+    margin: 3%;
+    font-size: .6vw;
+    color: #FFFFFF;
+}
+.login-reset-password a{
+    font-size: .6vw;
+    color: #FFFFFF;
+    font-weight: 700;
+    text-decoration: none;
+}
+.login-reset-password a:hover{
+    text-decoration: underline;
+}
+
+.login-register{
+    margin: 3%;
+    margin-top: 1%;
+    float: right;
+    font-size: .6vw;
+    color: #FFFFFF;
+}
+.login-register a{
+    font-size: .6vw;
+    color: #FFFFFF;
+    font-weight: 700;
+    text-decoration: none;
+}
+.login-register a:hover{
+    text-decoration: underline;
+}
+
+.vlna{
+    width: 100%;
+    height: 25%;
+    padding: 0;
+    margin: 0;
+    margin-top: 5%;
+    left: 0%;
+    float: bottom;
+    position: absolute;
+}

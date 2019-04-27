@@ -1,0 +1,121 @@
+{% extends "basic.html" %}
+{% block content %}
+    <img class="account-img" src="{{ image_file }}" alt="Profilový obrázek">
+    <br />
+    <p class="account-name">{{ current_user.name }}</p>
+    <p class="account-created">Uživatel od {{ current_user.date_registered.strftime('%m. %Y') }}</p>
+    <div class="errors">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="login-alert-{{ category }}" id="hide_alert">
+            {{ message }}
+            <button class="button_hide" onclick="hide_alert()">x</button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+    {% if current_user.obsidianUser == 1 %}
+    <div class="account-main-obsidian">
+    {% elif current_user.diamondUser == 1 %}
+    <div class="account-main-diamond">
+    {% elif current_user.platinumUser == 1 %}
+    <div class="account-main-platinum">
+    {% elif current_user.goldUser == 1 %}
+    <div class="account-main-gold">
+    {% elif current_user.silverUser == 1 %}
+    <div class="account-main-silver">
+    {% elif current_user.bronzeUser == 1 %}
+    <div class="account-main-bronze">
+    {% else %}
+    <div class="account-main">
+    {% endif %}
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="account-form">
+                {{ form.name.label(class="account-name-text") }}
+                {% if form.name.errors %}
+                    {{ form.name(class="text-form") }}
+                    <div>
+                        {% for error in form.name.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.name(class="text-form") }}
+                {% endif %}
+            </div>
+            <div class="account-form">
+                {{ form.email.label(class="account-name-text") }}
+                {% if form.email.errors %}
+                {{ form.email(class="text-form") }}
+                <div>
+                    {% for error in form.email.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.email(class="text-form") }}
+                {% endif %}
+            </div>
+            <div class="account-form">
+                {{ form.jidelna.label(class="account-name-text") }}
+                {% if form.jidelna.errors %}
+                    {{ form.jidelna(class="text-form") }}
+                    <div>
+                        {% for error in form.jidelna.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.jidelna(class="text-form") }}
+                {% endif %}
+            </div>
+            <div class="account-form">
+                {{ form.jidelna_heslo.label(class="account-name-text") }}
+                {% if form.jidelna_heslo.errors %}
+                    {{ form.jidelna_heslo(class="text-form") }}
+                    <div>
+                        {% for error in form.jidelna_heslo.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.jidelna_heslo(class="text-form", type="password") }}
+                {% endif %}
+            </div>
+            <div>
+                {{ form.picture.label(class="account-name-text") }}
+                {{ form.picture(class="lol") }}
+                <label for="picture" class="custom-file-upload">
+                    Nahrát soubor
+                    <input id="picture" name="picture" type="file"/>
+                </label>
+                {% if form.picture.errors  %}
+                    {% for error in form.picture.errors %}
+                        <span>{{ error }}</span>
+                        <br />
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div>
+                {{ form.submit() }}
+            </div>
+        </form>
+    </div>
+{% if current_user.diamondUser == 1 %}
+
+{% elif current_user.platinumUser == 1 %}
+<img class="achievements" src="{{ url_for('static', filename='Achievements_5.png')}}" alt="Vlna" height="600">
+{% elif current_user.goldUser == 1 %}
+<img class="achievements" src="{{ url_for('static', filename='Achievements_4.png')}}" alt="Vlna" height="600">
+{% elif current_user.silverUser == 1 %}
+<img class="achievements" src="{{ url_for('static', filename='Achievements_3.png')}}" alt="Vlna" height="600">
+{% elif current_user.bronzeUser == 1 %}
+<img class="achievements" src="{{ url_for('static', filename='Achievements_2.png')}}" alt="Vlna" height="600">
+{% else %}
+<img class="achievements" src="{{ url_for('static', filename='Achievements_1.png')}}" alt="Vlna" height="600">
+{% endif %}
+<img class="vlna" src="{{ url_for('static', filename='vlna.png')}}" alt="Vlna">
+{% endblock %}
