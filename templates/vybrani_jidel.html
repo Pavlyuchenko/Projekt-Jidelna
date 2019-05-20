@@ -12,7 +12,7 @@
 {% endwith %}
 <div style="display:none;" class="login-alert-info" id="hide_alert-info">
     Tvoje obědy se ukládají. Chvilku strpení prosím.
-    <button class="button_hide_info" onclick="hide_alert_info()">x</button>
+    <span class="spinner"></span>
 </div>
 <div class="jidla">
     <h2 class="jidla-h2">Výběr jídel:</h2>
@@ -25,6 +25,8 @@
             <form method="POST" action="{{ url_for('.vyber_jidel') }}">
                 <div class="jidla-submit">
                     <input class="order" type="submit" value="Uložit" onclick="showWaitingForLunch()"><br />
+                    <small>Pro ukládání obědů musíte mít nainstalovaný Firefox nebo Chrome (Pro správnou funkčnost doporučujeme nainstalovat Firefox).</small>
+                    <br />
                     <small>Ukládání obědů může trvat až 30 sekund. Prosíme o chvilku strpení.</small>
                 </div>
             {% for jidlo in meals %}
@@ -41,7 +43,7 @@
                                   </label>
                                   <p>Odhlásit oběd</p>
                                   <p>&nbsp;</p>
-                                  <img class="no-jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř">
+                                  <img class="no-jidlo-img" width="300" height="300" src="{{ url_for('static', filename='no_jidlo.png')}}" alt="Talíř">
                               </div>
                           </label>
                 {% endif %}
@@ -149,7 +151,8 @@
 </div>
 <div style="display:none;" class="login-alert-info_2" id="hide_alert-info_2">
     Tvoje obědy se ukládají. Chvilku strpení prosím.
-    <button class="button_hide_info" onclick="hide_alert_info_2()">x</button>
+    <br />
+    <span class="spinner_2"></span><p class="spinner_p">Ukládání...</p>
 </div>
 
 <img class="vlna" src="{{ url_for('static', filename='vlna.png')}}" alt="Vlna">

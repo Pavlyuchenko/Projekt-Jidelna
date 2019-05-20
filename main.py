@@ -5,7 +5,7 @@ import os
 import bs4
 import requests
 import re
-from time import gmtime, strftime, sleep
+from time import gmtime, strftime, sleep, time
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -246,8 +246,6 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default='default.png')
     icanteen = db.Column(db.String(20))
     icanteen_heslo = db.Column(db.String(20))
-    trida = db.Column(db.String(3), nullable=False)
-    jmeno = db.Column(db.String(30))
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
     hlasky = db.relationship('Hlaska', backref='author', lazy=True)
@@ -1002,12 +1000,12 @@ def home():
         elif datetime.today().weekday() == 5:
             kolik_je = "Pondělní obědy:"
             counter = 0
-        elif now_time > time(15, 00):
-            kolik_je = r"Zítřejší obědy:"
-            counter = 1
         elif datetime.today().weekday() == 6:
             kolik_je = "Zítřejší obědy:"
             counter = 0
+        elif now_time > time(15, 00):
+            kolik_je = r"Zítřejší obědy:"
+            counter = 1
         else:
             kolik_je = "Dnešní obědy:"
             counter = 0
@@ -1019,7 +1017,7 @@ def home():
 @app.route("/jidla")
 @login_required
 def jidla():
-    posts = Post.query.all()
+    posts = Post.query.order_by(Post.date_posted.desc())
     now = datetime.now()
     now_time = now.time()
     if now_time < time(11, 30) or (datetime.today().weekday() == 5 or datetime.today().weekday() == 6):
@@ -1065,45 +1063,51 @@ def vyber_jidel():
                 vybrane_jidla.append(counter)
                 chosen = True
             counter += 1
-    options = Options()
-    options.headless = True
-    driver = webdriver.Chrome(executable_path="./static/chromedriver.exe")
+    try:
+        from selenium.webdriver.firefox.options import Options as FirefoxOptions
+        options = FirefoxOptions()
+        options.add_argument("--headless")
+        driver = webdriver.Firefox(executable_path="./static/geckodriver.exe", options=options)
+    except:
+        options = Options()
+        options.headless = True
+        driver = webdriver.Chrome(executable_path="./static/chromedriver.exe", options=options)
+
     driver.get("https://jidelna.mgo.opava.cz:6204/faces/login.jsp")
     nameElem = driver.find_elements_by_class_name('form-control')[0]
     nameElem.send_keys(current_user.icanteen)
     passwordElem = driver.find_elements_by_class_name('form-control')[1]
     passwordElem.send_keys(current_user.icanteen_heslo)
     passwordElem.submit()
+    sleep(.8)
     mesic = driver.find_elements_by_class_name('mainMenu')[2]
     mesic.click()
     now = datetime.now()
     now_time = now.time()
-    if now_time < time(11, 30) and not (datetime.today().weekday() == 5 or datetime.today().weekday() == 6):
-        counter = 3
-    elif datetime.today().weekday() == 5 or datetime.today().weekday() == 6:
-        counter = 3
-    else:
-        counter = 3
+    counter = 3
     for i in range(1, 35):
         string = 'group' + str(i)
         vybrane_jidlo_ = request.form.get(string)
         if vybrane_jidlo_ is not None and int(vybrane_jidlo_) != vybrane_jidla[i] and int(vybrane_jidlo_) != 4:
             jidlo = driver.find_elements_by_css_selector('.btn.button-link.button-link-main')[counter + int(vybrane_jidlo_)-1]  # 6 == 3. den 1. oběd
+
             try:
                 jidlo.click()
             except Exception as e:
                 print(e)
             sleep(.5)
         elif vybrane_jidlo_ is not None and int(vybrane_jidlo_) == 4:
-            jidlo = driver.find_elements_by_css_selector('.btn.button-link.button-link-main')[counter + vybrane_jidla[i]-1]
-            try:
-                jidlo.click()
-            except Exception as e:
-                print(e)
-            sleep(1)
+            if vybrane_jidla[i] != 0:
+                jidlo = driver.find_elements_by_css_selector('.btn.button-link.button-link-main')[counter + vybrane_jidla[i]-1]
+                try:
+                    jidlo.click()
+                except Exception as e:
+                    print(e)
+                sleep(1)
 
         counter += 3
     flash('Tvoje obědy jsou nyní uloženy.', 'success')
+    driver.close()
     return redirect(request.referrer)
 
 
@@ -1295,14 +1299,10 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        if form.jidelna.data and form.jidelna_heslo.data and form.real_name.data:
-            user = User(name=form.name.data, email=form.email.data, password=password, icanteen=form.jidelna.data, icanteen_heslo=form.jidelna_heslo.data, trida=form.trida.data)
-        elif form.jidelna.data and form.jidelna_heslo.data:
-            user = User(name=form.name.data, email=form.email.data, password=password, icanteen=form.jidelna.data, icanteen_heslo=form.jidelna_heslo.data, trida=form.trida.data, jmeno=form.real_name.data)
-        elif form.real_name.data:
-            user = User(name=form.name.data, email=form.email.data, password=password, trida=form.trida.data, jmeno=form.real_name.data)
+        if form.jidelna.data and form.jidelna_heslo.data:
+            user = User(name=form.name.data, email=form.email.data, password=password, icanteen=form.jidelna.data, icanteen_heslo=form.jidelna_heslo.data)
         else:
-            user = User(name=form.name.data, email=form.email.data, password=password, trida=form.trida.data)
+            user = User(name=form.name.data, email=form.email.data, password=password)
         db.session.add(user)
         db.session.commit()
         flash(f'Účet byl vytvořen!', 'success')

@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, ValidationError
 from main import User
 from flask import flash
 
@@ -12,8 +12,6 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email *', validators=[Email("Zadej opravdový email")])
     jidelna = StringField('Přihlašovací jméno do iCanteen')
     jidelna_heslo = StringField('Heslo do iCanteen')
-    trida = SelectField('Třída', choices=[('1.A', '1.A'), ('2.A', '2.A'), ('3.A', '3.A'), ('4.A', '4.A'), ('5.A', '5.A'), ('6.A', '6.A'), ('7.A', '7.A'), ('8.A', '8.A'), ('1.B', '1.B'), ('1.C', '1.C'), ('1.D', '1.D'), ('2.B', '2.B'), ('2.C', '2.C'), ('2.D', '2.D'), ('3.B', '3.B'), ('3.C', '3.C'), ('3.D', '3.D'), ('4.B', '4.B'), ('4.C', '4.C'), ('4.D', '4.D')])
-    real_name = StringField('Jméno')
     password = PasswordField('Heslo *')
     submit = SubmitField('Zaregistovat')
 

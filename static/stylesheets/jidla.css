@@ -40,6 +40,7 @@ fieldset {
     padding-top: .7%;
     padding-left: .7%;
     color: #FFFFFF;
+    text-align: center;
 }
 
 .button_hide {
@@ -119,7 +120,7 @@ fieldset {
     float: left;
     color: #828282;
     background-color: #FFFFFF;
-    height: 500px;
+    height: 550px;
     transition: 0.35s;
 }
 
@@ -135,7 +136,7 @@ fieldset {
     float: left;
     color: #FFFFFF;
     background-color: #04C400;
-    height: 500px;
+    height: 550px;
 }
 
 h3{
@@ -263,4 +264,68 @@ h3{
     left: 0%;
     float: bottom;
     position: absolute;
+}
+
+
+.spinner {
+  position: absolute;
+  left: calc(50% - 35px);
+  top: 19%;
+}
+.spinner:before {
+  content: "";
+  position: relative;
+  display: block;
+}
+.spinner:after {
+  content: "Ukládání...";
+  position: relative;
+  display: block;
+  text-align: center;
+  margin-top: 5px;
+  margin-left: -6px;
+}
+.spinner:before {
+  animation: spinner 2s cubic-bezier(0.75, 0, 0.5, 1) infinite normal;
+  width: 40px;
+  height: 40px;
+  background-color: #818181;
+  border: 8px solid #8E8E8E;
+}
+
+.spinner_2 {
+  position: relative;
+  left: calc(50% - 35px);
+}
+.spinner_2:before {
+  content: "";
+  position: relative;
+  display: block;
+}
+.spinner_2:before {
+  animation: spinner 2s cubic-bezier(0.75, 0, 0.5, 1) infinite normal;
+  width: 40px;
+  height: 40px;
+  background-color: #818181;
+  border: 8px solid #8E8E8E;
+}
+
+.spinner_p{
+    margin-top: 5px;
+}
+
+@keyframes spinner {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+    text-align: left;
+  }
+  50% {
+    border-radius: 50%;
+    transform: scale(1) rotate(360deg);
+    text-align: center;
+    line-height:50px;
+  }
+  100% {
+    transform: scale(0.5) rotate(720deg);
+  }
 }

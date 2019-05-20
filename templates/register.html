@@ -5,21 +5,6 @@
     <div class="register">
         <h3 class="register-h3">Zaregistruj se!</h3>
         <img class="register-line" src="{{ url_for('static', filename='line_white.png')}}" alt="Čára">
-        <div class="register-jidelna_heslo-div">
-            {{ form.trida.label(class="register-jidelna_heslo") }}
-            {% if form.trida.errors %}
-                {% for error in form.trida.errors %}
-                    <div class="mb-10">
-                        {{ form.trida(class="val-error", type="password", placeholder="iCanteen heslo") }}
-                        <p class="error-p">{{ error }}</p>
-                    </div>
-                {% endfor %}
-            {% else %}
-            <div class="col-3" style="margin-bottom: 10%;">
-                {{ form.trida(class="effect-10", placeholder="Třída") }}
-            </div>
-            {% endif %}
-        </div>
         <div class="register-name-div">
             {{ form.name.label(class="register-name") }}
             {% if form.name.errors %}
@@ -78,21 +63,6 @@
             {% else %}
             <div class="col-3" style="margin-bottom: 10%;">
                 {{ form.jidelna_heslo(class="effect-10", type="password", placeholder="iCanteen heslo") }}
-            </div>
-            {% endif %}
-        </div>
-        <div class="register-jidelna_heslo-div">
-            {{ form.real_name.label(class="register-jidelna_heslo") }}
-            {% if form.real_name.errors %}
-                {% for error in form.real_name.errors %}
-                    <div class="mb-10">
-                        {{ form.real_name(class="val-error", type="password", placeholder="Jméno") }}
-                        <p class="error-p">{{ error }}</p>
-                    </div>
-                {% endfor %}
-            {% else %}
-            <div class="col-3" style="margin-bottom: 10%;">
-                {{ form.real_name(class="effect-10", type="text", placeholder="Jméno") }}
             </div>
             {% endif %}
         </div>
