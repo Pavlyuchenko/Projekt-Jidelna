@@ -174,9 +174,6 @@ input{
   transform: rotate(45deg);
 }
 
-.container:hover{
-    color: #cccccc;
-}
 
 input[type=submit] {
   width: 25%;

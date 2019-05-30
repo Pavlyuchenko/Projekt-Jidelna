@@ -137,6 +137,22 @@ fieldset {
     color: #FFFFFF;
     background-color: #04C400;
     height: 550px;
+    animation: appear .4s ease-in-out;
+}
+
+@keyframes appear{
+    0%{
+        transform: translate(0);
+    }
+    33%{
+        transform: translateY(10px);
+    }
+    66%{
+        transform: translateY(-10px);
+    }
+    100%{
+        transform: translate(0);
+    }
 }
 
 h3{
@@ -167,19 +183,43 @@ h3{
 }
 
 .jidlo-img{
+    filter: brightness(70%);
     object-fit: cover;
     display: block;
     margin-left: auto;
     margin-right: auto;
     border-radius: 50%;
+    transition: .2s;
 }
+
+.jidlo-img:hover~.img-rating{
+    opacity: 0;
+}
+
+.img-rating-div{
+    position: relative;
+}
+
+.img-rating{
+    opacity: 1;
+    transition: .2s;
+    text-shadow: 0 0 20px #F9BF3B, 0 0 20px #F9BF3B, 0 0 20px #F9BF3B;
+    position: absolute;
+    color: #F9BF3B;
+    right: 38%;
+    top: 125px;
+    font-size: 40px;
+}
+
 .jidlo-img:hover{
-    -webkit-transition: all .2s ease-in;
-    -webkit-transition: all .2s ease-in;
-    -moz-transition: all .2 ease-in;
-    -ms-transition: all .2s ease-in;
-    -o-transition: all .2s ease-in;
-    transition: all .2s ease-in;
+    filter: brightness(100%);
+    z-index: 10;
+    -webkit-transition: all .2s ease-in-out;
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2 ease-in-out;
+    -ms-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
     opacity: 1;
     transform: scale(2.5);
     -ms-transform: scale(2.5); /* IE 9 */

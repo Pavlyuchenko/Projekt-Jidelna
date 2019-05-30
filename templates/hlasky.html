@@ -62,9 +62,63 @@
                 <span>Filtrovat hlášky podle učitele:</span>
                 <select class="ucitel" name="ucitel" id="ucitel">
                     <option value="">Vše</option>
-                    <option value="Kořínek">Milan Kořínek</option>
-                    <option value="Halašková">Halašková</option>
-                    <option value="Janšta">Petr Janšta</option>
+                    <option value="Bartošíková">Bartošíková Hana		</option>
+                    <option value="Beierová">Beierová Jiřina		</option>
+                    <option value="Bendíková">Bendíková Zuzana		</option>
+                    <option value="Binarová">Binarová Radomíra		</option>
+                    <option value="Bitomská">Bitomská Barbora		</option>
+                    <option value="Borunská">Borunská Hana		</option>
+                    <option value="Čermák">Čermák Petr		</option>
+                    <option value="Černínová">Černínová Danuše		</option>
+                    <option value="Englišová">Englišová Radomíra		</option>
+                    <option value="Fiedler">Fiedler Michael		</option>
+                    <option value="Gebauerová">Gebauerová Blažena		</option>
+                    <option value="Gebauerová">Gebauerová Hana		</option>
+                    <option value="Halašková">Halašková Petra		</option>
+                    <option value="Hamřík">Hamřík Radomír		</option>
+                    <option value="Hánečková">Hánečková Eva		</option>
+                    <option value="Hanzliková">Hanzliková Zdeňka		</option>
+                    <option value="Herrmann">Herrmann Rostislav		</option>
+                    <option value="Hlubková">Hlubková Barbora		</option>
+                    <option value="Hronková">Hronková Šárka		</option>
+                    <option value="Janšta">Janšta Petr		</option>
+                    <option value="Jedličková">Jedličková Eva		</option>
+                    <option value="Jurčíková">Jurčíková Jana		</option>
+                    <option value="Kavecký">Kavecký Patrik		</option>
+                    <option value="Klapková">Klapková Monika		</option>
+                    <option value="Kolářová">Kolářová Kateřina		</option>
+                    <option value="Kopfová">Kopfová Jana		</option>
+                    <option value="Kořínek">Kořínek Milan		</option>
+                    <option value="Kořízek">Kořízek Pavel		</option>
+                    <option value="Kotrla">Kotrla Petr		</option>
+                    <option value="Koutná">Koutná Marie		</option>
+                    <option value="Krajcarová">Krajcarová Simona		</option>
+                    <option value="Krajčová">Krajčová Květoslava		</option>
+                    <option value="Krystová">Krystová Ivana		</option>
+                    <option value="Kuček">Kuček Martin		</option>
+                    <option value="Lipková">Lipková Jitka		</option>
+                    <option value="Maschke">Maschke Kamil		</option>
+                    <option value="Matějková">Matějková Jana		</option>
+                    <option value="Moravcová">Moravcová Petra		</option>
+                    <option value="Nováková">Nováková Sonnková Hana		</option>
+                    <option value="Novotná">Novotná Marcela		</option>
+                    <option value="Onderková">Onderková Gabriela		</option>
+                    <option value="Ondrúšová">Ondrúšová Marcela		</option>
+                    <option value="Pavelková">Pavelková Alena		</option>
+                    <option value="Pobořil">Pobořil Milan		</option>
+                    <option value="Prošvicová">Prošvicová Jana		</option>
+                    <option value="Puhačová">Puhačová Helena		</option>
+                    <option value="Pustějovský">Pustějovský Václav		</option>
+                    <option value="Herman">Herman Sajdová Aneta		</option>
+                    <option value="Slovík">Slovík Jiří		</option>
+                    <option value="Slovíková">Slovíková Eliška		</option>
+                    <option value="Staněk">Staněk Aleš		</option>
+                    <option value="Štec">Štec Petr		</option>
+                    <option value="Štrychová">Štrychová Lucie		</option>
+                    <option value="Vítek">Vítek Daniel		</option>
+                    <option value="Watt">Watt Steve		</option>
+                    <option value="Zápecová">Zápecová Kamila		</option>
+                    <option value="Zemková">Zemková Dáša		</option>
                     <input class="ucitel-submit" type="submit" value="Hledat">
                 </select>
             </div>
@@ -139,6 +193,32 @@
                                         </div>
                                     </div>
                                 {% endif %}
+                                <!--Surprised-->
+                                {% if current_user.has_surprise_hlaska_post(post) %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('surprise_hlaska_action', post_id=post.id, action='unsurprise') }}"><div class="emoji yellow-red"><img src="{{ url_for('static', filename='jazyk.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Mňam!</h6>
+                                            {% for foo in post.surprise %}
+                                                {% if current_user.name != foo.surprisedHlaskaAuthor.name %}
+                                                    <p>{{ foo.surprisedHlaskaAuthor.name }}</p>
+                                                {% else %}
+                                                    <p>Vy</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="dropup">
+                                        <a href="{{ url_for('surprise_hlaska_action', post_id=post.id, action='surprise') }}"><div class="emoji"><img src="{{ url_for('static', filename='jazyk.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
+                                        <div class="dropup-content">
+                                            <h6 class="dropup-nadpis">Mňam!</h6>
+                                            {% for foo in post.surprise %}
+                                                <p>{{ foo.surprisedHlaskaAuthor.name }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <!--Confused-->
                                 {% if current_user.has_confused_hlaska_post(post) %}
                                     <div class="dropup">
@@ -168,7 +248,7 @@
                                 <!--Angry-->
                                 {% if current_user.has_angry_hlaska_post(post) %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('angry_hlaska_action', post_id=post.id, action='unangry') }}"><div class="emoji red-yellow"><img src="{{ url_for('static', filename='angry.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.angry.count() }}</div></a>
+                                        <a href="{{ url_for('angry_hlaska_action', post_id=post.id, action='unangry') }}"><div class="emoji red-red"><img src="{{ url_for('static', filename='angry.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.angry.count() }}</div></a>
                                         <div class="dropup-content">
                                             <h6 class="dropup-nadpis">Naštvaní</h6>
                                             {% for foo in post.angry %}
@@ -191,38 +271,12 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                                <!--Surprised-->
-                                {% if current_user.has_surprise_hlaska_post(post) %}
-                                    <div class="dropup">
-                                        <a href="{{ url_for('surprise_hlaska_action', post_id=post.id, action='unsurprise') }}"><div class="emoji yellow-black"><img src="{{ url_for('static', filename='surprised.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
-                                        <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Překvapení</h6>
-                                            {% for foo in post.surprise %}
-                                                {% if current_user.name != foo.surprisedHlaskaAuthor.name %}
-                                                    <p>{{ foo.surprisedHlaskaAuthor.name }}</p>
-                                                {% else %}
-                                                    <p>Vy</p>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <div class="dropup">
-                                        <a href="{{ url_for('surprise_hlaska_action', post_id=post.id, action='surprise') }}"><div class="emoji"><img src="{{ url_for('static', filename='surprised.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
-                                        <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Překvapení</h6>
-                                            {% for foo in post.surprise %}
-                                                <p>{{ foo.surprisedHlaskaAuthor.name }}</p>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endif %}
                                 <!--Sad-->
                                 {% if current_user.has_sad_hlaska_post(post) %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('sad_hlaska_action', post_id=post.id, action='unsad') }}"><div class="emoji yellow-blue"><img src="{{ url_for('static', filename='sad.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
+                                        <a href="{{ url_for('sad_hlaska_action', post_id=post.id, action='unsad') }}"><div class="emoji yellow-blue"><img src="{{ url_for('static', filename='slinak.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Smutní</h6>
+                                            <h6 class="dropup-nadpis">Boží!</h6>
                                             {% for foo in post.sad %}
                                                 {% if current_user.name != foo.sadHlaskaAuthor.name %}
                                                     <p>{{ foo.sadHlaskaAuthor.name }}</p>
@@ -234,9 +288,9 @@
                                     </div>
                                 {% else %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('sad_hlaska_action', post_id=post.id, action='sad') }}"><div class="emoji"><img src="{{ url_for('static', filename='sad.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
+                                        <a href="{{ url_for('sad_hlaska_action', post_id=post.id, action='sad') }}"><div class="emoji"><img src="{{ url_for('static', filename='slinak.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Smutní</h6>
+                                            <h6 class="dropup-nadpis">Boží!</h6>
                                             {% for foo in post.sad %}
                                                 <p>{{ foo.sadHlaskaAuthor.name }}</p>
                                             {% endfor %}

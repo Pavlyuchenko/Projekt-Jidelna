@@ -386,7 +386,7 @@ small{
 }
 
 .emoji{
-    padding-top: 5px;
+    padding-top: 4px;
     padding-bottom: 7px;
     padding-left: 10px;
     padding-right: 20px;
@@ -394,7 +394,7 @@ small{
     display: inline;
     color: #999999;
     border-radius: 0px;
-    margin-right: -4px;
+    margin-left: -4px;
 }
 
 .blue{
@@ -412,33 +412,33 @@ small{
     color: #FFFFFF;
 }
 
-.red-yellow{
-    background-image: linear-gradient(#ED5766, #FED869);
+.red-red{
+    background-image: linear-gradient(#c61919, #c61919);
     color: #FFFFFF;
 }
 
 .emoji img{
     vertical-align: middle;
-    border-radius: 500px;
+    border-radius: 0px;
 }
 
 .yellow-blue{
-    background-image: linear-gradient(#ffb32d, #ffb32d, #ffb32d, #009dff);
+    background-image: linear-gradient(#FED869, #FED869, #ffb32d, #ffb32d, #009dff);
     color: #FFFFFF;
 }
 
 .yellow-red{
-    background-image: linear-gradient(#ffb32d, #ffb32d, #ffb32d, #EF5265);
+    background-image: linear-gradient(#FED869, #FED869, #FED869, #EF5265);
     color: #FFFFFF;
 }
 
 .yellow-black{
-    background-image: linear-gradient(#ffb32d, #ffb32d, #ffb32d, #686868);
+    background-image: linear-gradient(#FED869, #FED869, #FED869, #686868);
     color: #FFFFFF;
 }
 
 .yellow-green{
-    background-image: linear-gradient(#ffb32d, #ffb32d, #ffb32d, #ffb32d, #528f36);
+    background-image: linear-gradient(#ffce55, #ffb32d, #ffb32d, #ffb32d, #528f36);
     color: #FFFFFF;
 }
 
@@ -458,6 +458,8 @@ a{
 }
 
 .dropup-content {
+    max-height: 200px;
+    overflow-y: scroll;
     padding: 5px;
     padding-top: 0;
     display: none;
@@ -468,10 +470,23 @@ a{
     bottom: 30px;
     z-index: 1;
     border-radius: 5px;
+    margin-left: -4px;
+    margin-bottom: 0px;
 }
 
 .dropup:hover .dropup-content {
     display: block;
+    animation: show .3s ease-in-out;
+    transform-origin: left bottom;
+}
+
+@keyframes show{
+    0% {
+        transform: scaleY(0) scaleX(0) rotateZ(-50deg);
+    }
+    100% {
+        transform: scaleY(1) scaleX(1) rotateZ(0);
+    }
 }
 
 .dropup-nadpis{

@@ -10,9 +10,10 @@
         {% endfor %}
     {% endif %}
 {% endwith %}
-<div style="display:none;" class="login-alert-info" id="hide_alert-info">
+<div style="display:none;" class="login-alert-info_2" id="hide_alert-info">
     Tvoje obědy se ukládají. Chvilku strpení prosím.
-    <span class="spinner"></span>
+    <br />
+    <span class="spinner_2"></span><p class="spinner_p">Ukládání...</p>
 </div>
 <div class="jidla">
     <h2 class="jidla-h2">Výběr jídel:</h2>
@@ -68,12 +69,15 @@
                             {% for post in posts %}
                                 {% if not foo and post.jidlo.lower() in jidlo.lower() %}
                                     {% if foo.append(True) %} {% endif %}
-                                    <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}" title="{{ post.jidlo }}"/>
+                                    <div class="img-rating-div">
+                                        <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}"  title="{{ post.jidlo }}"/>
+                                        <span class="img-rating">{{post.rating}}/5</span>
+                                    </div>
                                     <a style="color: #898989;" href="{{ url_for('.search', search=post.jidlo) }}"><p style="font-size: 10px;">Obrázek: {{ post.jidlo }}</p></a>
                                 {% endif %}
                             {% endfor %}
                             {% if not foo %}
-                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř">
+                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř" style="filter: brightness(100%);">
                             {% endif %}
                             </div>
                             </label>
@@ -98,12 +102,15 @@
                             {% for post in posts %}
                                 {% if not foo and post.jidlo.lower() in jidlo.lower() %}
                                     {% if foo.append(True) %} {% endif %}
-                                        <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}"  title="{{ post.jidlo }}"/>
+                                        <div class="img-rating-div">
+                                            <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}"  title="{{ post.jidlo }}"/>
+                                            <span class="img-rating">{{post.rating}}/5</span>
+                                        </div>
                                         <a style="color: #898989;" href="{{ url_for('.search', search=post.jidlo) }}"><p style="font-size: 10px;">Obrázek: {{ post.jidlo }}</p></a>
                                 {% endif %}
                             {% endfor %}
                             {% if not foo %}
-                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř">
+                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř" style="filter: brightness(100%);">
                             {% endif %}
                         </div>
                         </label>
@@ -128,12 +135,15 @@
                             {% for post in posts %}
                                 {% if not foo and post.jidlo.lower() in jidlo.lower() %}
                                     {% if foo.append(True) %} {% endif %}
-                                        <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}" title="{{ post.jidlo }}"/>
+                                        <div class="img-rating-div">
+                                            <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}"  title="{{ post.jidlo }}"/>
+                                            <span class="img-rating">{{post.rating}}/5</span>
+                                        </div>
                                         <a style="color: #898989;" href="{{ url_for('.search', search=post.jidlo) }}"><p style="font-size: 10px;">Obrázek: {{ post.jidlo }}</p></a>
                                 {% endif %}
                             {% endfor %}
                             {% if not foo %}
-                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř">
+                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř" style="filter: brightness(100%);">
                             {% endif %}
                         </div>
                         </label>

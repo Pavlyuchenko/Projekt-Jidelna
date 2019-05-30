@@ -265,6 +265,7 @@ input[type="file"] {
     background-color: #19A7D8;
     border-radius: 7px;
     padding: 1.5%;
+    min-height: 400px;
 }
 
 .post-obsidian{
@@ -321,6 +322,7 @@ input[type="file"] {
 }
 
 .recenze-img-jidlo{
+    filter: brightness(60%);
     object-fit: cover;
     border-radius: 50%;
     height: 200px;
@@ -328,20 +330,49 @@ input[type="file"] {
     margin-right: -20px;
     margin-top: 0px;
     margin-left: 10px;
+    z-index: 10;
+    transition: .2s;
 }
 
 .recenze-img-jidlo:hover{
+    filter: brightness(100%);
     color: #424242;
-  -webkit-transition: all .2s ease-in;
-  -webkit-transition: all .2s ease-in;
-  -moz-transition: all .2 ease-in;
-  -ms-transition: all .2s ease-in;
-  -o-transition: all .2s ease-in;
-  transition: all .2s ease-in;
-  opacity: 1;
-  transform: scale(3);
-  -ms-transform: scale(3); /* IE 9 */
-  -webkit-transform: scale(3); /* Safari and Chrome */
+    -webkit-transition: all .2s ease-in;
+    -webkit-transition: all .2s ease-in;
+    -moz-transition: all .2 ease-in;
+    -ms-transition: all .2s ease-in;
+    -o-transition: all .2s ease-in;
+    transition: all .2s ease-in;
+    opacity: 1;
+    transform: scale(3);
+    -ms-transform: scale(3); /* IE 9 */
+    -webkit-transform: scale(3); /* Safari and Chrome */
+      z-index: 10;
+}
+
+.img-rating{
+    opacity: 1;
+    z-index: 10;
+    text-shadow: 0 0 40px #F9BF3B, 0 0 20px #F9BF3B, 0 0 20px #F9BF3B, 0 0 30px #F9BF3B;
+    position: absolute;
+    color: #F9BF3B;
+    right: 4%;
+    top: 100px;
+    font-size: 40px;
+    transition: visibility 0.1s, opacity 0.1s linear;
+}
+
+.recenze-img-jidlo:hover~.foo{
+    opacity: 0;
+}
+
+.img-rating:hover{
+    display: none;
+}
+
+.recenze-img-jidlo:hover~.img-rating{
+    opacity: 0;
+    visibility: hidden;
 }
 
 .author{
@@ -377,6 +408,7 @@ input[type="file"] {
 }
 
 .post-content{
+    position: relative;
     border-radius: 4px;
     background-color: transparent;
     background-color: transparent;
@@ -407,10 +439,13 @@ input[type="file"] {
     background-color: #FFFFFF;
     border-radius: 50px;
     display: inline-block;
+    max-height: 40px;
+    cursor: pointer;
 }
 
 .emoji{
-    padding-top: 4px;
+    overflow: hidden;
+    padding-top: 5px;
     padding-bottom: 7px;
     padding-left: 10px;
     padding-right: 20px;
@@ -418,7 +453,8 @@ input[type="file"] {
     display: inline;
     color: #999999;
     border-radius: 0px;
-    margin-right: -4px;
+    margin-right: 0px;
+    margin-left: -4px;
 }
 
 .blue{
@@ -429,6 +465,7 @@ input[type="file"] {
 .red{
     background-color: #c70404;
     color: #FFFFFF;
+    animation: showup 1s ease-in-out;
 }
 
 .yellow{
@@ -452,7 +489,7 @@ input[type="file"] {
 }
 
 .yellow-red{
-    background-image: linear-gradient(#FED869, #FED869, #FED869, #EF5265);
+    background-image: linear-gradient(#ffb32d, #ffb32d, #ffb32d, #EF5265);
     color: #FFFFFF;
 }
 
@@ -476,11 +513,13 @@ a{
 
 
 .dropup {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 }
 
 .dropup-content {
+    max-height: 200px;
+    overflow-y: scroll;
     padding: 5px;
     padding-top: 0;
     display: none;
@@ -491,10 +530,23 @@ a{
     bottom: 30px;
     z-index: 1;
     border-radius: 5px;
+    margin-left: -5px;
+    margin-bottom: 0px;
 }
 
 .dropup:hover .dropup-content {
     display: block;
+    animation: show .3s ease-in-out;
+    transform-origin: left bottom;
+}
+
+@keyframes show{
+    0% {
+        transform: scaleY(0) scaleX(0) rotateZ(-50deg);
+    }
+    100% {
+        transform: scaleY(1) scaleX(1) rotateZ(0);
+    }
 }
 
 .dropup-nadpis{
@@ -659,3 +711,73 @@ small{
   color: #19A7D8;
 }
 
+
+
+.rating {
+  margin: 50px auto;
+  width: 220px;
+  position: absolute;
+  right: -15px;
+  top: 180px;
+  opacity: 1;
+}
+
+.rating > * {
+  float: right;
+}
+
+.rating label {
+  height: 40px;
+  width: 20%;
+  display: block;
+  position: relative;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.rating label:after {
+  transition: all 0.4s ease-out;
+  -webkit-font-smoothing: antialiased;
+  position: absolute;
+  content: "☆";
+  color: white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-size: 40px;
+}
+
+.rating input {
+  display: none;
+}
+.rating input:checked + label:after,
+.rating input:checked ~ label:after {
+  content: "★";
+  color: #F9BF3B;
+  text-shadow: 0 0 30px #F9BF3B, 0 0 20px #F9BF3B, 0 0 20px #F9BF3B;
+}
+.rating label:hover,
+.rating label:hover ~ label:after{
+    text-shadow: 0 0 30px #F9BF3B, 0 0 30px #F9BF3B, 0 0 20px #F9BF3B;
+    content: "★";
+    color: #F9BF3B;
+    transform: scale(1.5) rotateZ(-20deg);
+}
+
+.rating label:hover::after {
+    color: #F9BF3B;
+    content: "★";
+}
+
+.gifec{
+    transition: .2s;
+}
+.gifec:hover{
+    transform: scale(2);
+}
+
+.zero_rating{
+    cursor: pointer;
+}

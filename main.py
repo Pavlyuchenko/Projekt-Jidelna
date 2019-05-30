@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, redirect, url_for, request, Markup, abort
+from flask import Flask, render_template, flash, redirect, url_for, request, jsonify
 from PIL import Image
 import secrets
 import os
@@ -248,6 +248,7 @@ class User(db.Model, UserMixin):
     icanteen_heslo = db.Column(db.String(20))
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
+    ratings = db.relationship('Rating', backref='author', lazy=True)
     hlasky = db.relationship('Hlaska', backref='author', lazy=True)
     comments = db.relationship('Comment', backref='author', lazy=True)
     comments_priznani = db.relationship('CommentPriznani', backref='author', lazy=True)
@@ -600,27 +601,6 @@ class User(db.Model, UserMixin):
 from forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CommentForm, PriznaniForm, HlaskaForm, ResetPasswordForm, RequestResetForm
 
 
-class Post(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(50), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    picture = db.Column(db.String(20))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    jidlo = db.Column(db.String(50), nullable=False)
-    comments = db.relationship('Comment', backref='article', lazy=True, cascade="all, delete-orphan")
-    likes = db.relationship('PostLike', backref='post', lazy='dynamic')
-    loves = db.relationship('PostLove', backref='post', lazy='dynamic')
-    confuses = db.relationship('PostConfused', backref='post', lazy='dynamic')
-    angry = db.relationship('PostAngry', backref='post', lazy='dynamic')
-    surprise = db.relationship('PostSurprised', backref='post', lazy='dynamic')
-    sad = db.relationship('PostSad', backref='post', lazy='dynamic')
-    laugh = db.relationship('PostLaugh', backref='post', lazy='dynamic')
-
-    def __repr__(self):
-        return f"Post('{self.title}', '{self.date_posted}')"
-
-
 class Priznani(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
@@ -691,6 +671,38 @@ class Hlaska(db.Model, UserMixin):
         return f"Post('{self.date_posted, self.ucitel}')"
 
 
+class Post(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    picture = db.Column(db.String(20))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    jidlo = db.Column(db.String(50), nullable=False)
+    comments = db.relationship('Comment', backref='article', lazy=True, cascade="all, delete-orphan")
+    likes = db.relationship('PostLike', backref='post', lazy='dynamic')
+    loves = db.relationship('PostLove', backref='post', lazy='dynamic')
+    confuses = db.relationship('PostConfused', backref='post', lazy='dynamic')
+    angry = db.relationship('PostAngry', backref='post', lazy='dynamic')
+    surprise = db.relationship('PostSurprised', backref='post', lazy='dynamic')
+    sad = db.relationship('PostSad', backref='post', lazy='dynamic')
+    laugh = db.relationship('PostLaugh', backref='post', lazy='dynamic')
+    rating_overall = db.Column(db.Integer)
+    rating_count = db.Column(db.Integer)
+    rating = db.Column(db.String(5))
+    ratings = db.relationship('Rating', backref='post_author', lazy=True)
+
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')"
+
+
+class Rating(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    post = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    count = db.Column(db.String(10))
+
+
 class MyModelView(ModelView):
     def is_accessible(self):
         if not current_user.is_authenticated:
@@ -699,109 +711,250 @@ class MyModelView(ModelView):
             return True
         return False
 
+
 admin = Admin(app)
 admin.add_view(MyModelView(User, db.session))
 admin.add_view(MyModelView(Post, db.session))
+admin.add_view(MyModelView(Rating, db.session))
 admin.add_view(MyModelView(Comment, db.session))
-admin.add_view(MyModelView(CommentPriznani, db.session))
-admin.add_view(MyModelView(CommentHlaska, db.session))
 admin.add_view(MyModelView(Priznani, db.session))
+admin.add_view(MyModelView(CommentPriznani, db.session))
 admin.add_view(MyModelView(Hlaska, db.session))
+admin.add_view(MyModelView(CommentHlaska, db.session))
 
 
-@app.route('/like/<int:post_id>/<action>')
+@app.route('/rate')
 @login_required
-def like_action(post_id, action):
+def rate_meal():
+    post_id = request.args.get('post_id')
+    stars = request.args.get('stars')
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    ratings = Rating.query.filter_by(author=current_user)
+    current_rating = 0
+    for rating in ratings:
+        if rating.author == current_user and rating.post_author == post:
+            post.rating_overall -= int(rating.count)
+            post.rating_count -= 1
+            current_rating = str(int(rating.count)/10)
+            rating.count = str(int(stars) * 10)
+            if int(stars) == 0:
+                db.session.delete(rating)
+                db.session.commit()
+            break
+    else:
+        if int(stars) != 0:
+            rating = Rating(post=post.id, author=current_user, count=str(int(stars)*10))
+            db.session.add(rating)
+            db.session.commit()
+
+    if post.rating_overall is None:
+        post.rating_overall = 0
+        post.rating_count = 0
+
+    if int(stars) != 0:
+        for counter in range(1, 6):
+            if int(stars) == counter:
+                html_id = 'input[value=' + stars + str(post.id) + ']'
+                post.rating_count += 1
+                post.rating_overall += 10 * counter
+    else:
+        html_id = 'input[value=' + str(int(float(current_rating))) + str(post.id) + ']'
+
+    if post.rating_count != 0:
+        post.rating = str(round(post.rating_overall / post.rating_count / 10, 1))
+    else:
+        post.rating = 0
+    db.session.commit()
+    return jsonify(html_id=html_id, rating=post.rating, poust_id=post.id)
+
+
+@app.route('/like')
+@login_required
+def like_action():
+    post_id = request.args.get('post_id')
+    action = request.args.get('action')
+    this_id = request.args.get('this_id')
+    count = request.args.get('count')
     post = Post.query.filter_by(id=post_id).first_or_404()
     if action == 'like':
         current_user.like_post(post)
         db.session.commit()
-    if action == 'unlike':
+        div_class = "blue"
+        add_or_remove = "add"
+        new_text = " " + str(int(count) + 1)
+        action = 'unlike'
+    else:
         current_user.unlike_post(post)
         db.session.commit()
-    return redirect(request.referrer)
+        div_class = "blue"
+        add_or_remove = "remove"
+        new_text = " " + str(int(count) - 1)
+        action = "like"
+    this_id = "#" + str(this_id)
+    new_text_id = "#spanlike" + str(post_id)
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
 
 
-@app.route('/love/<int:post_id>/<action>')
+@app.route('/love')
 @login_required
-def love_action(post_id, action):
+def love_action():
+    post_id = request.args.get('post_id')
+    action = request.args.get('action')
+    this_id = request.args.get('this_id')
+    count = request.args.get('count')
     post = Post.query.filter_by(id=post_id).first_or_404()
     if action == 'love':
         current_user.love_post(post)
         db.session.commit()
-    if action == 'unlove':
+        div_class = "red"
+        add_or_remove = "add"
+        new_text = " " + str(int(count) + 1)
+        action = 'unlove'
+    else:
         current_user.unlove_post(post)
         db.session.commit()
-    return redirect(request.referrer)
+        div_class = "red"
+        add_or_remove = "remove"
+        new_text = " " + str(int(count) - 1)
+        action = "love"
+    this_id = "#" + str(this_id)
+    new_text_id = "#spanlove" + str(post_id)
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
 
 
-@app.route('/confuse/<int:post_id>/<action>')
+@app.route('/confuse')
 @login_required
-def confuse_action(post_id, action):
+def confuse_action():
+    post_id = request.args.get('post_id')
+    action = request.args.get('action')
+    this_id = request.args.get('this_id')
+    count = request.args.get('count')
     post = Post.query.filter_by(id=post_id).first_or_404()
     if action == 'confuse':
         current_user.confuse_post(post)
         db.session.commit()
-    if action == 'unconfuse':
+        div_class = "yellow-green"
+        add_or_remove = "add"
+        new_text = " " + str(int(count) + 1)
+        action = 'unconfuse'
+    else:
         current_user.unconfuse_post(post)
         db.session.commit()
-    return redirect(request.referrer)
+        div_class = "yellow-green"
+        add_or_remove = "remove"
+        new_text = " " + str(int(count) - 1)
+        action = "confuse"
+    this_id = "#" + str(this_id)
+    new_text_id = "#spanconfuse" + str(post_id)
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
 
 
-@app.route('/angry/<int:post_id>/<action>')
+@app.route('/angry')
 @login_required
-def angry_action(post_id, action):
+def angry_action():
+    post_id = request.args.get('post_id')
+    action = request.args.get('action')
+    this_id = request.args.get('this_id')
+    count = request.args.get('count')
     post = Post.query.filter_by(id=post_id).first_or_404()
     if action == 'angry':
         current_user.angry_post(post)
         db.session.commit()
-    if action == 'unangry':
+        div_class = "red-red"
+        add_or_remove = "add"
+        new_text = " " + str(int(count) + 1)
+        action = 'unangry'
+    else:
         current_user.unangry_post(post)
         db.session.commit()
-    return redirect(request.referrer)
+        div_class = "red-red"
+        add_or_remove = "remove"
+        new_text = " " + str(int(count) - 1)
+        action = "angry"
+    this_id = "#" + str(this_id)
+    new_text_id = "#spanangry" + str(post_id)
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
 
 
-@app.route('/surprise/<int:post_id>/<action>')
+@app.route('/surprise')
 @login_required
-def surprise_action(post_id, action):
+def surprise_action():
+    post_id = request.args.get('post_id')
+    action = request.args.get('action')
+    this_id = request.args.get('this_id')
+    count = request.args.get('count')
     post = Post.query.filter_by(id=post_id).first_or_404()
     if action == 'surprise':
         current_user.surprise_post(post)
         db.session.commit()
-    if action == 'unsurprise':
+        div_class = "yellow-red"
+        add_or_remove = "add"
+        new_text = " " + str(int(count) + 1)
+        action = 'unsurprise'
+    else:
         current_user.unsurprise_post(post)
         db.session.commit()
-    return redirect(request.referrer)
+        div_class = "yellow-red"
+        add_or_remove = "remove"
+        new_text = " " + str(int(count) - 1)
+        action = "surprise"
+    this_id = "#" + str(this_id)
+    new_text_id = "#spansurprise" + str(post_id)
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
 
 
-@app.route('/sad/<int:post_id>/<action>')
+@app.route('/sad')
 @login_required
-def sad_action(post_id, action):
+def sad_action():
+    post_id = request.args.get('post_id')
+    action = request.args.get('action')
+    this_id = request.args.get('this_id')
+    count = request.args.get('count')
     post = Post.query.filter_by(id=post_id).first_or_404()
     if action == 'sad':
         current_user.sad_post(post)
         db.session.commit()
-    if action == 'unsad':
+        div_class = "yellow-blue"
+        add_or_remove = "add"
+        new_text = " " + str(int(count) + 1)
+        action = 'unsad'
+    else:
         current_user.unsad_post(post)
         db.session.commit()
-    return redirect(request.referrer)
+        div_class = "yellow-blue"
+        add_or_remove = "remove"
+        new_text = " " + str(int(count) - 1)
+        action = "sad"
+    this_id = "#" + str(this_id)
+    new_text_id = "#spansad" + str(post_id)
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
 
 
-@app.route('/laugh/<int:post_id>/<action>')
+@app.route('/laugh')
 @login_required
-def laugh_action(post_id, action):
+def laugh_action():
+    post_id = request.args.get('post_id')
+    action = request.args.get('action')
+    this_id = request.args.get('this_id')
+    count = request.args.get('count')
     post = Post.query.filter_by(id=post_id).first_or_404()
     if action == 'laugh':
         current_user.laugh_post(post)
         db.session.commit()
-    if action == 'unlaugh':
+        div_class = "yellow-blue"
+        add_or_remove = "add"
+        new_text = " " + str(int(count) + 1)
+        action = 'unlaugh'
+    else:
         current_user.unlaugh_post(post)
         db.session.commit()
-    return redirect(request.referrer)
-
-
-
-
+        div_class = "yellow-blue"
+        add_or_remove = "remove"
+        new_text = " " + str(int(count) - 1)
+        action = "laugh"
+    this_id = "#" + str(this_id)
+    new_text_id = "#spanlaugh" + str(post_id)
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text,new_text_id=new_text_id, action=action)
 
 
 @app.route('/like_priznani/<int:post_id>/<action>')
@@ -895,8 +1048,6 @@ def laugh_priznani_action(post_id, action):
     return redirect(request.referrer)
 
 
-
-
 @app.route('/like_hlaska/<int:post_id>/<action>')
 @login_required
 def like_hlaska_action(post_id, action):
@@ -947,6 +1098,7 @@ def angry_hlaska_action(post_id, action):
         current_user.unangry_hlaska_post(post)
         db.session.commit()
     return redirect(request.referrer)
+
 
 
 @app.route('/surprise_hlaska/<int:post_id>/<action>')
@@ -1024,7 +1176,8 @@ def jidla():
         cas = 0
     else:
         cas = 1
-    return render_template('vybrani_jidel.html', meals=get_jidla(), link="jidla", vybrane_jidla_mesic=vybrane_jidla_mesic(), posts=posts, cas=cas, title="Projekt Jídelna - Výběr jídel")
+    ratings = Rating.query.filter_by(author=current_user)
+    return render_template('vybrani_jidel.html', meals=get_jidla(), link="jidla", vybrane_jidla_mesic=vybrane_jidla_mesic(), posts=posts, cas=cas, title="Projekt Jídelna - Výběr jídel", ratings=ratings)
 
 
 @app.route("/vyber_jidel", methods=['GET', 'POST'])
@@ -1199,18 +1352,6 @@ def delete_hlaska(post_id):
     return redirect(request.referrer)
 
 
-@app.route('/json')
-def json():
-    return render_template('json.html')
-
-
-@app.route('/background_process_test')
-def background_process_test():
-    current_user.email = "XDDDDDDDDDDD"
-    db.session.commit()
-    return ""
-
-
 @app.route("/recenze", methods=['GET', 'POST'])
 @login_required
 def recenze():
@@ -1219,7 +1360,7 @@ def recenze():
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = save_picture(form.picture.data, 1500, 1500)
-        post = Post(title=form.title.data, content=form.content.data, author=current_user, picture=picture_file, jidlo=form.jidlo.data)
+        post = Post(title=form.title.data, content=form.content.data, author=current_user, picture=picture_file, jidlo=form.jidlo.data, rating="X.x")
         db.session.add(post)
         db.session.commit()
         flash('Tvůj přispěvek byl vytvořen', 'success')
@@ -1246,7 +1387,34 @@ def recenze():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=6)
     comments = Comment.query.all()
-    return render_template('recenze.html', title='Projekt Jídelna - Recenze', form=form, link="recenze", posts=posts, comments=comments, commentForm=commentForm)
+    ratings = Rating.query.filter_by(author=current_user)
+    return render_template('recenze.html', title='Projekt Jídelna - Recenze', form=form, link="recenze", posts=posts, comments=comments, commentForm=commentForm, ratings=ratings)
+
+
+@app.route("/search")
+def search():
+    form = PostForm()
+    hledane_jidlo = request.args.get('search').lower()
+    hledane_jidlo_s_jinym_kodovanim = unicodedata.normalize('NFKD', hledane_jidlo)
+    hledane_jidlo_bez_diaktritiky = ""
+    for pismeno in hledane_jidlo_s_jinym_kodovanim:
+        if not unicodedata.combining(pismeno):
+            hledane_jidlo_bez_diaktritiky += pismeno
+    jidlo_regex = re.compile(hledane_jidlo_bez_diaktritiky)
+    posts = Post.query.order_by(Post.date_posted.desc())
+    vyhledane_posty = []
+    for post in posts:
+        jidlo_z_post_bez_diaktritiky = ""
+        jidlo_z_post_s_jinym_kodovanim = unicodedata.normalize('NFKD', post.jidlo.lower())
+        for letter in jidlo_z_post_s_jinym_kodovanim:
+            if not unicodedata.combining(letter):
+                jidlo_z_post_bez_diaktritiky += letter
+        if jidlo_regex.search(jidlo_z_post_bez_diaktritiky) is not None:
+            vyhledane_posty.append(post)
+
+    commentForm = CommentForm()
+    comments = Comment.query.all()
+    return render_template("search.html", posts=vyhledane_posty, comments=comments, commentForm=commentForm, link="search", form=form)
 
 
 @app.route("/priznani", methods=['GET', 'POST'])
@@ -1270,9 +1438,9 @@ def priznani():
     return render_template('priznani.html', title='Přiznání MGO', form=form, link="priznani", posts=posts, comments=comments, commentForm=commentForm)
 
 
-@app.route("/about")
+@app.route("/kontakt")
 def about():
-    return render_template('about.html', title="Projekt Jídelna - O nás", link="about")
+    return render_template('about.html', title="Projekt Jídelna - Kontakt", link="about")
 
 
 @app.route("/hlasky", methods=['GET', 'POST'])
@@ -1371,33 +1539,9 @@ def account():
     return render_template('account.html', title='Projekt Jídelna - Účet', image_file=image_file, form=form, link="account")
 
 
-@app.route("/search")
-def search():
-    hledane_jidlo = request.args.get('search').lower()
-    hledane_jidlo_s_jinym_kodovanim = unicodedata.normalize('NFKD', hledane_jidlo)
-    hledane_jidlo_bez_diaktritiky = ""
-    for pismeno in hledane_jidlo_s_jinym_kodovanim:
-        if not unicodedata.combining(pismeno):
-            hledane_jidlo_bez_diaktritiky += pismeno
-    jidlo_regex = re.compile(hledane_jidlo_bez_diaktritiky)
-    posts = Post.query.order_by(Post.date_posted.desc())
-    vyhledane_posty = []
-    for post in posts:
-        jidlo_z_post_bez_diaktritiky = ""
-        jidlo_z_post_s_jinym_kodovanim = unicodedata.normalize('NFKD', post.jidlo.lower())
-        for letter in jidlo_z_post_s_jinym_kodovanim:
-            if not unicodedata.combining(letter):
-                jidlo_z_post_bez_diaktritiky += letter
-        if jidlo_regex.search(jidlo_z_post_bez_diaktritiky) is not None:
-            vyhledane_posty.append(post)
-
-    commentForm = CommentForm()
-    comments = Comment.query.all()
-    return render_template("search.html", posts=vyhledane_posty, comments=comments, commentForm=commentForm, link="search")
-
-
 @app.route("/search_ucitel")
 def search_ucitel():
+    form = HlaskaForm()
     hledane_jidlo = request.args.get('ucitel')
     if hledane_jidlo == "":
         return redirect(url_for('.hlasky'))
@@ -1410,7 +1554,7 @@ def search_ucitel():
 
     commentForm = CommentForm()
     comments = CommentHlaska.query.all()
-    return render_template("search_ucitel.html", posts=vyhledane_posty, comments=comments, commentForm=commentForm, link="search", current_ucitel=hledane_jidlo)
+    return render_template("search_ucitel.html", posts=vyhledane_posty, comments=comments, commentForm=commentForm, link="search", current_ucitel=hledane_jidlo, form=form)
 
 
 def send_reset_email(user):

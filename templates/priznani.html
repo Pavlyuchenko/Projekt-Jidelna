@@ -15,7 +15,6 @@
         <button class="home-button" onclick="novy_prispevek_2()">x</button>
         <form method="POST" action="" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
-        <h2>Přiznání</h2>
         <div class="recenze-obsah-2">
             {% if form.content.errors %}
                 {{ form.content(class="form-control form-control-lg is-invalid") }}
@@ -84,9 +83,9 @@
                                 <!--Love-->
                                 {% if current_user.has_loved_priznani_post(post) %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('love_priznani_action', post_id=post.id, action='unlove') }}"><div class="emoji red"><img src="{{ url_for('static', filename='hearth.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.loves.count() }}</div></a>
+                                        <a href="{{ url_for('love_priznani_action', post_id=post.id, action='unlove') }}"><div class="emoji red"><img src="{{ url_for('static', filename='dislike.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.loves.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Super</h6>
+                                            <h6 class="dropup-nadpis">Dislike</h6>
                                             {% for foo in post.loves %}
                                                 {% if current_user.name != foo.lovePriznaniAuthor.name %}
                                                     <p>{{ foo.lovePriznaniAuthor.name }}</p>
@@ -98,21 +97,21 @@
                                     </div>
                                 {% else %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('love_priznani_action', post_id=post.id, action='love') }}"><div class="emoji"><img src="{{ url_for('static', filename='hearth.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.loves.count() }}</div></a>
+                                        <a href="{{ url_for('love_priznani_action', post_id=post.id, action='love') }}"><div class="emoji"><img src="{{ url_for('static', filename='dislike.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.loves.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Super</h6>
+                                            <h6 class="dropup-nadpis">Dislike</h6>
                                             {% for foo in post.loves %}
                                                 <p>{{ foo.lovePriznaniAuthor.name }}</p>
                                             {% endfor %}
                                         </div>
                                     </div>
                                 {% endif %}
-                                <!--Confused-->
+                                <!--Mnam-->
                                 {% if current_user.has_confused_priznani_post(post) %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('confuse_priznani_action', post_id=post.id, action='unconfuse') }}"><div class="emoji yellow"><img src="{{ url_for('static', filename='confused.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.confuses.count() }}</div></a>
+                                        <a href="{{ url_for('confuse_priznani_action', post_id=post.id, action='unconfuse') }}"><div class="emoji yellow-red"><img src="{{ url_for('static', filename='jazyk.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.confuses.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Zmatení</h6>
+                                            <h6 class="dropup-nadpis">Mňam!</h6>
                                             {% for foo in post.confuses %}
                                                 {% if current_user.name != foo.confusedPriznaniAuthor.name %}
                                                     <p>{{ foo.confusedPriznaniAuthor.name }}</p>
@@ -124,9 +123,9 @@
                                     </div>
                                 {% else %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('confuse_priznani_action', post_id=post.id, action='confuse') }}"><div class="emoji"><img src="{{ url_for('static', filename='confused.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.confuses.count() }}</div></a>
+                                        <a href="{{ url_for('confuse_priznani_action', post_id=post.id, action='confuse') }}"><div class="emoji"><img src="{{ url_for('static', filename='jazyk.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.confuses.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Zmatení</h6>
+                                            <h6 class="dropup-nadpis">Mňam!</h6>
                                             {% for foo in post.confuses %}
                                                 <p>{{ foo.confusedPriznaniAuthor.name }}</p>
                                             {% endfor %}
@@ -136,9 +135,9 @@
                                 <!--Angry-->
                                 {% if current_user.has_angry_priznani_post(post) %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('angry_priznani_action', post_id=post.id, action='unangry') }}"><div class="emoji red-yellow"><img src="{{ url_for('static', filename='angry.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.angry.count() }}</div></a>
+                                        <a href="{{ url_for('angry_priznani_action', post_id=post.id, action='unangry') }}"><div class="emoji yellow-green"><img src="{{ url_for('static', filename='vomit.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.angry.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Naštvaní</h6>
+                                            <h6 class="dropup-nadpis">Fuj!</h6>
                                             {% for foo in post.angry %}
                                                 {% if current_user.name != foo.angryPriznaniAuthor.name %}
                                                     <p>{{ foo.angryPriznaniAuthor.name }}</p>
@@ -150,9 +149,9 @@
                                     </div>
                                 {% else %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('angry_priznani_action', post_id=post.id, action='angry') }}"><div class="emoji"><img src="{{ url_for('static', filename='angry.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.angry.count() }}</div></a>
+                                        <a href="{{ url_for('angry_priznani_action', post_id=post.id, action='angry') }}"><div class="emoji"><img src="{{ url_for('static', filename='vomit.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.angry.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Naštvaní</h6>
+                                            <h6 class="dropup-nadpis">Fuj!</h6>
                                             {% for foo in post.angry %}
                                                 <p>{{ foo.angryPriznaniAuthor.name }}</p>
                                             {% endfor %}
@@ -162,9 +161,9 @@
                                 <!--Surprised-->
                                 {% if current_user.has_surprise_priznani_post(post) %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('surprise_priznani_action', post_id=post.id, action='unsurprise') }}"><div class="emoji yellow-black"><img src="{{ url_for('static', filename='surprised.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
+                                        <a href="{{ url_for('surprise_priznani_action', post_id=post.id, action='unsurprise') }}"><div class="emoji red-red"><img src="{{ url_for('static', filename='angry.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Překvapení</h6>
+                                            <h6 class="dropup-nadpis">Naštvaní</h6>
                                             {% for foo in post.surprise %}
                                                 {% if current_user.name != foo.surprisedPriznaniAuthor.name %}
                                                     <p>{{ foo.surprisedPriznaniAuthor.name }}</p>
@@ -176,9 +175,9 @@
                                     </div>
                                 {% else %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('surprise_priznani_action', post_id=post.id, action='surprise') }}"><div class="emoji"><img src="{{ url_for('static', filename='surprised.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
+                                        <a href="{{ url_for('surprise_priznani_action', post_id=post.id, action='surprise') }}"><div class="emoji"><img src="{{ url_for('static', filename='angry.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.surprise.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Překvapení</h6>
+                                            <h6 class="dropup-nadpis">Naštvaní</h6>
                                             {% for foo in post.surprise %}
                                                 <p>{{ foo.surprisedPriznaniAuthor.name }}</p>
                                             {% endfor %}
@@ -188,9 +187,9 @@
                                 <!--Sad-->
                                 {% if current_user.has_sad_priznani_post(post) %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('sad_priznani_action', post_id=post.id, action='unsad') }}"><div class="emoji yellow-blue"><img src="{{ url_for('static', filename='sad.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
+                                        <a href="{{ url_for('sad_priznani_action', post_id=post.id, action='unsad') }}"><div class="emoji yellow-blue"><img src="{{ url_for('static', filename='slinak.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Smutní</h6>
+                                            <h6 class="dropup-nadpis">Boží!</h6>
                                             {% for foo in post.sad %}
                                                 {% if current_user.name != foo.sadPriznaniAuthor.name %}
                                                     <p>{{ foo.sadPriznaniAuthor.name }}</p>
@@ -202,9 +201,9 @@
                                     </div>
                                 {% else %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('sad_priznani_action', post_id=post.id, action='sad') }}"><div class="emoji"><img src="{{ url_for('static', filename='sad.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
+                                        <a href="{{ url_for('sad_priznani_action', post_id=post.id, action='sad') }}"><div class="emoji"><img src="{{ url_for('static', filename='slinak.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.sad.count() }}</div></a>
                                         <div class="dropup-content">
-                                            <h6 class="dropup-nadpis">Smutní</h6>
+                                            <h6 class="dropup-nadpis">Boží!</h6>
                                             {% for foo in post.sad %}
                                                 <p>{{ foo.sadPriznaniAuthor.name }}</p>
                                             {% endfor %}
@@ -214,7 +213,7 @@
                                 <!--Laugh-->
                                 {% if current_user.has_laugh_priznani_post(post) %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('laugh_priznani_action', post_id=post.id, action='unlaugh') }}"><div class="emoji yellow-red" style="border-radius: 0px 50px 50px 0px;"><img src="{{ url_for('static', filename='smile.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.laugh.count() }}</div></a>
+                                        <a href="{{ url_for('laugh_priznani_action', post_id=post.id, action='unlaugh') }}"><div class="emoji yellow-blue" style="border-radius: 0px 50px 50px 0px;"><img src="{{ url_for('static', filename='haha.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.laugh.count() }}</div></a>
                                         <div class="dropup-content">
                                             <h6 class="dropup-nadpis">Pobavení</h6>
                                             {% for foo in post.laugh %}
@@ -228,7 +227,7 @@
                                     </div>
                                 {% else %}
                                     <div class="dropup">
-                                        <a href="{{ url_for('laugh_priznani_action', post_id=post.id, action='laugh') }}"><div class="emoji" style="border-radius: 0px 50px 50px 0px;"><img src="{{ url_for('static', filename='smile.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.laugh.count() }}</div></a>
+                                        <a href="{{ url_for('laugh_priznani_action', post_id=post.id, action='laugh') }}"><div class="emoji" style="border-radius: 0px 50px 50px 0px;"><img src="{{ url_for('static', filename='haha.png') }}" alt="Emoji" width="30px" height="30px"> {{ post.laugh.count() }}</div></a>
                                         <div class="dropup-content">
                                             <h6 class="dropup-nadpis">Pobavení</h6>
                                             {% for foo in post.laugh %}
