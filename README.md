@@ -1,2 +1,0 @@
-Projekt vytvořený do školy pro studenty. Díky této aplikaci mají studenti možnost si vybrat jídlo s fotkou, recenzovat jídla, psát hlášky učitelů či psát přiznání.
-Stránka byla vytvořena v průběhu 4 měsíců za pomocí Pythonu (Flask), HTML, CSS, Javascriptu a jQuery
