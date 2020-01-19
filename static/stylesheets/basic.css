@@ -19,6 +19,7 @@ body{
     width: 6%;
     height: 6%;
     margin-right: 4%;
+    display: block;
 }
 
 .navbar-main-buttons{
@@ -79,7 +80,7 @@ body{
     padding: 0% .5%;
     position: absolute;
     background: #FFFFFF;
-    height: 3%;
+    height: calc(1% + 1vw);
     width: 20%;
     margin-left: calc(33% + 50px);
     transition: 0.25s;
@@ -88,4 +89,84 @@ body{
 
 .search-bar:hover{
     background-color: #cccccc;
+}
+
+
+.navbar .icon {
+  display: none;
+}
+
+.navbar .icon div{
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 4px 4px;
+}
+
+@media screen and (max-width: 600px) {
+  .navbar a:not(:first-child) {display: none;}
+  .navbar a.icon {
+    float: right;
+    display: block;
+  }
+  .search-bar{
+    display: block;
+    top: 12px;
+    left: -100px;
+    width: 30%;
+  }
+  .navbar{
+    height: 20px;
+  }
+  .navbar img{
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .navbar.responsive {
+    width: 100%;
+    position: relative;
+    text-align: center;
+  }
+  .navbar.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .navbar.responsive a {
+    float: none;
+    display: block;
+    font-size: 15px;
+    margin-top: 0px;
+    margin-right: 0;
+  }
+  .navbar.responsive a button{
+    underline: 0;
+    text-align: left;
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  #first_button{
+    margin-top: 50px;
+    margin-left: -70px;
+  }
+  #login{
+    margin-bottom: 10px;
+  }
+  .navbar.responsive .search-bar{
+    display: block;
+    height: 20px;
+    left: -40px;
+  }
+  .navbar.responsive{
+    height: auto;
+  }
+
+  .navbar-logo{
+    width: 50px;
+    height: 35px;
+    padding: 0;
+    margin-top: -5px;
+  }
 }

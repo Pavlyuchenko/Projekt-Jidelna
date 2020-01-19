@@ -2,7 +2,7 @@
 <html lang="cs">
     <head>
         <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Roboto+Condensed" rel="stylesheet">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2, minimum-scale=0.5">
         <meta charset="UTF-8">
         <title>Projekt Jídelna</title>
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -21,38 +21,39 @@
                     <a href="{{ url_for('.about') }}"><button class=navbar-main-buttons>Kontakt</button></a>
                 </div>
             </div>
-            <img height="500" class="navbar-logo-main" src="{{ url_for('static', filename='logo.png')}}" alt="Projekt Jídelna">
+            <p style="text-align: center; margin-bottom: 0;"><img height="500" class="navbar-logo-main" src="{{ url_for('static', filename='logo.png')}}" alt="Projekt Jídelna" style="margin-bottom: 0;"></p>
             <h1 class=navbar-h1>Už nikdy nejez, co nechceš!</h1>
             <p class=navbar-p style="margin-top: 2%;">Vyber si jídla, která máš rád.</p>
-            <p class=navbar-p>Bez klamavých jmen.</p>
+            <p class=navbar-p>Bez klamavých názvů.</p>
             <div class="buttonss">
                 <a href="{{ url_for('.login') }}"><button class="navbar-button" style="margin-left: 6%;">Přihlásit se</button></a>
                 <a href="{{ url_for('register') }}"><button class="navbar-button">Registrace</button></a>
             </div>
         </div>
         <div class="content">
-            <div class="content-img-div">
+            <div class="content-img-div-1">
                 <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='plate.png')}}" alt="Plate">
-                <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='checkboxes.png')}}" alt="Checkboxes">
-                <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='funkce.png')}}" alt="Functions">
+                <span class="content-span_1">Vyber si své obědy s fotkou, ať víš, co si obědnáváš!</span>
             </div>
-            <div class="content-span-div">
-                <span class="content-span">Vyber si své obědy s fotkou,</span>
-                <span class="content-span">Jednodušší a hezčí vybírání</span>
-                <span class="content-span">&nbsp &nbspMnohem více funkcí, než<br /></span>
-                <span class="content-span">&nbsp &nbsp ať víš, co si obědnáváš!</span>
-                <span class="content-span">&nbsp &nbsp &nbsp &nbsp &nbsp obědů než na iCanteen</span>
-                <span class="content-span">&nbsp &nbsp &nbsp &nbsp &nbsp na stránkách jídelny!</span>
+            <div class="content-img-div-2">
+                <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='checkboxes.png')}}" alt="Checkboxes">
+                <span class="content-span_2">Jednodušší a hezčí vybírání obědů než na iCanteen</span>
+            </div>
+            <div class="content-img-div-3">
+                <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='funkce.png')}}" alt="Functions">
+                <span class="content-span_3">&nbsp &nbspMnohem více funkcí, než na stránkách jídelny!<br /></span>
             </div>
             <img class="content-line" src="{{ url_for('static', filename='line.png')}}" alt="Line">
-            <h2 class="content-h2">Přidej se již dnes a získej spoustu výhod!</h2>
-            <p class="content-p">S touto webovou aplikací máš přístup k Přiznání MGO, Hlášky učitelů, k vybírání obědů i</p>
-            <p class="content-p">s fotkami a k hodnocení všech obědů</p>
-            <a href="{{ url_for('.register') }}">
-                <div class=content-button>
-                    <span>Přidej se k nám!</span>
-                </div>
-            </a>
+            <div id="pre-footer">
+                <h2 class="content-h2">Přidej se již dnes a získej spoustu výhod!</h2>
+                <p class="content-p">S touto webovou aplikací máš přístup k Přiznání MGO, Hlášky učitelů, k vybírání obědů i</p>
+                <p class="content-p">s fotkami a k hodnocení všech obědů</p>
+                <a href="{{ url_for('.register') }}">
+                    <div class=content-button>
+                        <span>Přidej se k nám!</span>
+                    </div>
+                </a>
+            </div>
         </div>
         <img class="vlna" src="{{ url_for('static', filename='vlna.png')}}" alt="Vlna">
     </body>

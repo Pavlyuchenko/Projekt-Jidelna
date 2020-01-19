@@ -157,7 +157,9 @@ fieldset {
 
 h3{
     display: inline-block;
-    font-size: 22px;
+    font-size: 26px;
+    margin-bottom: 0;
+    margin-top: 50px;
 }
 
 .jidlo-div p{
@@ -183,6 +185,16 @@ h3{
 }
 
 .jidlo-img{
+    filter: brightness(70%);
+    object-fit: cover;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    transition: .2s;
+}
+
+.jidlo-img-unknown{
     filter: brightness(70%);
     object-fit: cover;
     display: block;

@@ -3,7 +3,7 @@
     <img class="account-img" src="{{ image_file }}" alt="Profilový obrázek">
     <br />
     <p class="account-name">{{ current_user.name }}</p>
-    <p class="account-created">Uživatel od {{ current_user.date_registered.strftime('%m. %Y') }}</p>
+    <p class="account-created">Uživatel od {{ current_user.date_registered.strftime('%d. %m. %Y') }}</p>
     <div class="errors">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

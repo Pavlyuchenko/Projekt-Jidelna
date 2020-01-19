@@ -32,6 +32,8 @@
             <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/priznani.css') }}">
         {% elif link == "hlasky" %}
             <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/hlasky.css') }}">
+        {% elif link == "recenze_2" %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/recenze_2.css') }}">
         {% endif %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script>
@@ -122,6 +124,15 @@
           var x = document.getElementById("hide_alert-info_2");
           x.style.display = "block";
         }
+
+        function responsify() {
+          var x = document.getElementById("navbar");
+          if (x.className === "navbar") {
+            x.className += " responsive";
+          } else {
+            x.className = "navbar";
+          }
+        }
         </script>
     </head>
     {% if current_user.diamondUser == 1 %}
@@ -129,21 +140,24 @@
     {% else %}
     <body>
     {% endif %}
-        <div class="navbar">
+        <div class="navbar" id="navbar">
             <a href="{{ url_for('.home') }}"><img class="navbar-logo" src="{{ url_for('static', filename='logo.png')}}" alt="Projekt Jídelna"></a>
-            <a href="{{ url_for('.home') }}"><button class="navbar-main-buttons">Domů</button></a>
+            <a href="{{ url_for('.home') }}"><button class="navbar-main-buttons" id="first_button">Domů</button></a>
             <a href="{{ url_for('.jidla') }}"><button class="navbar-main-buttons">Výběr jídel</button></a>
             <a href="{{ url_for('.recenze') }}"><button class="navbar-main-buttons">Recenze</button></a>
             <a href="{{ url_for('.priznani') }}"><button class="navbar-main-buttons">Přiznání</button></a>
             <a href="{{ url_for('.hlasky') }}"><button class="navbar-main-buttons">Hlášky</button></a>
             <a href="{{ url_for('.about') }}"><button class="navbar-main-buttons">Kontakt</button></a>
             {% if current_user.is_authenticated %}
-                <a class="navbar-secondary-buttons" href="{{ url_for('.logout') }}">Odhlásit se</a>
+                <a class="navbar-secondary-buttons" href="{{ url_for('.logout') }}" id="login">Odhlásit se</a>
                 <a class="navbar-secondary-buttons" href="{{ url_for('.account') }}">{{ current_user.name }}</a>
             {% else %}
-                <a class="navbar-secondary-buttons" style="margin-right: 1%;" href="{{ url_for('.register') }}">Registrace</a>
+                <a class="navbar-secondary-buttons" style="margin-right: 1%;" href="{{ url_for('.register') }}" id="login">Registrace</a>
                 <a class="navbar-secondary-buttons" href="{{ url_for('.login') }}">Přihlášení</a>
             {% endif %}
+            <a class="icon" onclick="responsify()">
+              <i class="fa fa-bars"><div></div><div></div><div></div></i>
+            </a>
             <form action="search" method="GET">
                 <input class="search-bar" type="text" name="search" placeholder="Hledat jídlo..." autocomplete="off">
             </form>

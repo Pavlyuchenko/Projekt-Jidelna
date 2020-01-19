@@ -5,6 +5,7 @@ body{
     margin: 0px;
     font-family: 'Roboto', sans-serif;
     background-color: #D8D8D8;
+    overflow-x: hidden;
 }
 
 .navbar{
@@ -22,30 +23,24 @@ body{
     color: #F0EFF4;
     margin-left: 0%;
     margin-bottom: -5px;
-    margin-top: -4%;
+    margin-top: 0%;
 }
 
 .navbar-logo{
     float: left;
     padding: 1%;
     padding-top: .4%;
-    width: 6%;
-    height: 8%;
+    width: 130px;
+    height: 91px;
     margin-right: 4%;
 }
 
-.navbar-logo-main{
-    margin-top: -40px;
-    margin-bottom: 0;
-    margin-left: -10px;
-    padding-bottom: 0;
-}
 
 .navbar-buttons{
     text-align: left;
     font-weight: 400;
     font-size: 1vw;
-    padding: 2%;
+    padding: 40px;
     transition: 0.3s;
 }
 
@@ -66,7 +61,7 @@ a{
     padding-bottom: .5%;
     cursor: pointer;
     color: F0EFF4;
-    font-size: 1vw;
+    font-size: 20px;
     transition: 0.3s;
 }
 
@@ -86,7 +81,7 @@ a{
     padding-bottom: .5%;
     cursor: pointer;
     color: F0EFF4;
-    font-size: 1vw;
+    font-size: 20px;
     font-family: 'Roboto', sans-serif;
     float: right;
     transition: 0.3s;
@@ -110,8 +105,8 @@ a{
 }
 
 .navbar-button {
-  width: 12%;
-  font-size: 1.4vw;
+  width: calc(10% + 100px);
+  font-size: 25px;
   background-color: #128FB6;
   border: none;
   color: white;
@@ -130,63 +125,99 @@ a{
     background-color: #139ac4;
 }
 
-
 .content-img-div{
+    margin: 0;
+    padding: 0;
     margin-top: 5%;
     padding-left: 18%;
+    min-width: 650px;
 }
 
 .content-img{
-    padding-left: 10%;
-    width: 14%;
-    height: 15%;
+    margin: 0;
+    padding: 0;
+    width: 300px;
+    height: 300px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.content-span-div{
-    padding-left: 20%;
-    font-weight: 100;
-    font-size: 1.22vw;
+.content-img-div-1{
+    text-align: center;
+    min-width: 712px;
+    margin-bottom: 100px;
 }
 
-.content-span{
-    padding-left: 6%;
+.content-span_1{
+    width: 17%;
+    font-size: calc(.7vw + 15px);
+    color: #878787;
 }
+
+.content-img-div-2{
+    text-align: center;
+    min-width: 712px;
+    margin-bottom: 100px;
+}
+
+.content-span_2{
+    width: 17%;
+    font-size: calc(.7vw + 15px);
+    color: #878787;
+}
+
+.content-img-div-3{
+    text-align: center;
+    min-width: 712px;
+}
+
+.content-span_3{
+    width: 17%;
+    font-size: calc(.7vw + 15px);
+    color: #878787;
+}
+
 
 
 .content-line{
     height: 4px;
     width: 88%;
+    min-width: 650px;
     margin-left: 6%;
     margin-top: 5%;
+}
+
+#pre-footer{
+    min-width: 705px;
 }
 
 .content-h2{
     color: #878787;
     text-align: center;
-    font-size: 2vw;
+    font-size: calc(1vw + 25px);
     margin-bottom: 0px;
+    min-width: 650px;
 }
 
 .content-p{
     color: #878787;
     text-align: center;
-    font-size: .9vw;
+    font-size: calc(.5vw + 15px);
+    min-width: 650px;
 }
 
 .content-button{
     background-color: #128FB5;
     font-weight: 700;
-    width: 14%;
-    font-size: 1.4vw;
-    border: none;
+    width: calc(100px + 10%);
+    font-size: calc(.5vw + 15px);
     color: white;
-    padding: .8% 1.5%;
+    padding: 8px 15px;
     border-radius: 2px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
-    margin: 4% 1%;
-    margin-left: 41.5%;
+    margin: auto;
     margin-top: 1%;
     cursor: pointer;
     transition: 0.2s;
@@ -196,22 +227,13 @@ a{
     background-color: #14a5d1;
 }
 
-.footer{
-    background-color: #19A7D8;
-    width: 100%;
-    height: 20px;
-}
-
-.footer-text{
-    color: white;
-    padding-left: 10px;
-}
 .vlna{
     width: 100%;
+    min-width: 715px;
     height: 25%;
     padding: 0;
     margin: 0;
-    margin-top: -3%;
+    margin-top: 0%;
     left: 0%;
     float: bottom;
     position: absolute;

@@ -1,0 +1,134 @@
+{% extends "basic.html" %}
+{% block content %}
+<script>
+    $(function() {
+        $('input[type="radio"]').bind('click', function(){
+            $.getJSON('rate', {
+                post_id: $(this).attr('name'),
+                stars: $(this).attr('class'),
+            }, function(data) {
+                $(data.html_id).prop("checked",true);
+                $('#img-rating' + data.poust_id).text(data.rating + "/5");
+            });
+            return false;
+        });
+    });
+    $(function() {
+        $('.zero_rating').bind('click', function(){
+            $.getJSON('rate', {
+                post_id: $(this).attr('name'),
+                stars: $(this).attr('stars'),
+            }, function(data) {
+                $(data.html_id).prop("checked",false);
+                $('#img-rating' + data.poust_id).text(data.rating + "/5");
+            });
+            return false;
+        });
+    });
+
+    $(function() {
+        $('div .emoji').bind('click', function(){
+            $.getJSON($(this).attr('type'), {
+                post_id: $(this).attr('post_id'),
+                action: $(this).attr('action'),
+                this_id: $(this).attr('id'),
+                count: $(this).attr('count'),
+            }, function(data) {
+                if (data.add_or_remove == "add"){
+                    $(data.this_id).addClass(data.div_class);
+                } else {
+                    $(data.this_id).removeClass(data.div_class);
+                }
+                $(data.new_text_id).text(data.new_text);
+                $(data.this_id).attr("action", data.action);
+                $(data.this_id).attr("count", data.new_text);
+                if($("#" + data.delete).length){
+                	$(data.vy_id).children("#" + data.delete).remove();
+                }else{
+                	$(data.vy_id).append("<p id='" + data.delete + "'>Vy</p>");
+                }
+            });
+            return false;
+        });
+    });
+</script>
+    {% for day in days.items %}
+        <h1>{{ day.den_v_tydnu }} {{ day.date_posted.strftime('%d.%m.') }}</h1>
+        <div class="wrapper">
+            {% for post in day.posts %}
+                <div class="post">
+                    <h3>{{post.cislo}}. jídlo</h3>
+                    <p>{{post.jidlo}}</p>
+                    <div class="img-content">
+                        {% if post.jidlo == " Toto jídlo se dnes nepodává" %}
+                            <img style="float:right;" class="recenze-img-no-jidlo" src="{{ url_for('static', filename='profile_pics/no_jidlo.png') }}" alt="Profilovka"/>
+                        {% else %}
+                            <img style="float:right;" class="recenze-img-jidlo" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="Profilovka"/>
+                        {% endif %}
+                        {% if post.jidlo != " Toto jídlo se dnes nepodává" %}
+                            <span class="img-rating" id="img-rating{{post.id}}">{{post.rating}}/5</span>
+                        {% endif %}
+                        <form action="" class="foo">
+                            <div class="rating">
+                                {% if post.jidlo != " Toto jídlo se dnes nepodává" %}
+                                    <input type="radio" name="{{ post.id }}" class="5" id="{{post.date_posted}}1" value=5{{post.id}} {% for rating in ratings %}{% if rating.post_author.id == post.id %}{% set number = rating.count | int %}{% if number == 50 %}checked{% endif %}{% endif %}{% endfor %}>
+                                    <label for="{{post.date_posted}}1"></label>
+                                    <input type="radio" name="{{ post.id }}" class="4" id="{{post.date_posted}}2" value=4{{post.id}} {% for rating in ratings %}{% if rating.post_author.id == post.id %}{% set number = rating.count | int %}{% if number == 40 %}checked{% endif %}{% endif %}{% endfor %}>
+                                    <label for="{{post.date_posted}}2"></label>
+                                    <input type="radio" name="{{ post.id }}" class="3" id="a{{post.date_posted}}3" value=3{{post.id}} {% for rating in ratings %}{% if rating.post_author.id == post.id %}{% set number = rating.count | int %}{% if number == 30 %}checked{% endif %}{% endif %}{% endfor %}>
+                                    <label for="a{{post.date_posted}}3"></label>
+                                    <input type="radio" name="{{ post.id }}" class="2" id="{{post.date_posted}}4" value=2{{post.id}} {% for rating in ratings %}{% if rating.post_author.id == post.id %}{% set number = rating.count | int %}{% if number == 20 %}checked{% endif %}{% endif %}{% endfor %}>
+                                    <label for="{{post.date_posted}}4"></label>
+                                    <input type="radio" name="{{ post.id }}" class="1" id="{{post.date_posted}}5" value=1{{post.id}} {% for rating in ratings %}{% if rating.post_author.id == post.id %}{% set number = rating.count | int %}{% if number == 10 %}checked{% endif %}{% endif %}{% endfor %}>
+                                    <label for="{{post.date_posted}}5"></label>
+                                    <p style="color: #c70404;" class="zero_rating" stars="0" name="{{ post.id }}" id="{{post.date_posted}}0" value=0{{post.id}}>Zrušit</p>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="comment-section">
+            <div class="new-comment">
+                <h2>Komentáře:</h2>
+                <form method="POST" action="{{ url_for('.comment', day_id=day.id) }}">
+                    {{ form.hidden_tag() }}
+                    <div class="new-comment-body">
+                        {% if commentForm.content.errors %}
+                        {{ commentForm.content() }}
+                        <div class="invalid-feedback">
+                            {% for error in commentForm.content.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                            <img class="new-comment-photo" src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" alt="Profilovka"/>
+                            {{ commentForm.content(class="new-comment-text", type="text", placeholder="Napiš komentář...", autocomplete="off") }}
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="comments">
+                {% for com in comments %}
+                    {% if com.day_id == day.id %}
+                        <div class="comment-body">
+                            <img class="comment-photo" src="{{ url_for('static', filename='profile_pics/' + com.author.image_file) }}" alt="Profilovka"/>
+                            <div class="comment-text">
+                                {% if current_user == com.author %}
+                                    <span class="comment-p"><span style="color: #19A7D8; font-size: 16px; margin-left: -10px;">Vy&nbsp;</span> {{ com.body }}</span>
+                                {% else %}
+                                    <span class="comment-p"><span style="color: #19A7D8; font-size: 16px; margin-left: -10px;">{{ com.author.name }}&nbsp;</span> {{ com.body }}</span>
+                                {% endif %}
+                            </div>
+                            {% if current_user == com.author %}
+                                <span><a style="color: red; font-size: 13px;" href="{{ url_for('.delete_comment', comment_id=com.id) }}"><img class="gifec" width="15" height="15" src="{{ url_for('static',  filename='bin.png') }}" alt="Smazat"></a></span>
+                            {% endif %}
+                            <p class="comment-date" style="font-size: 12px; color: #cccccc;">{{ com.date_posted.strftime('%d.%m.%Y') }}, {{ com.date_posted.strftime('%H:%M') }}</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

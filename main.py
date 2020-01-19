@@ -17,23 +17,172 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask_mail import Mail, Message
-'''
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
-def print_date_time():
-    print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+def save_meals():
+    jidla = []
+    try:
+        url = requests.get('https://jidelna.mgo.opava.cz:6204/faces/login.jsp')
+        url.raise_for_status()
+        soup = bs4.BeautifulSoup(url.text, features="html.parser")
+        jidelnicek_datum = soup.select('div .jidelnicekDen div strong .important')  # list datumů
+        jidelnicek_den = soup.select('div .jidelnicekDen div strong span')  # list dnů v týdnu
+        jidelnicek_jidlo = soup.select('div .jidelnicekDen div div')
+        dny = {}
+        for datum in jidelnicek_datum:
+            text2 = datum.text
+            dny[text2.strip()] = ""  # Vytvoří key v listu dny
+        dnyvtydnu = []
+        for den in jidelnicek_den:
+            text3 = den.text
+            if re.match('^[P, Ú, S, Č, P]+', text3.strip()) is not None:
+                dnyvtydnu.append(text3.strip())
+        counter = 0
+        for i in dny.keys():
+            dny[i] = dnyvtydnu[counter]  # Přidá k datům názvy dnů
+            counter += 1
+        now = datetime.now()
+        current_month = now.month + 1
+        current_year = now.year
+        mesic = Mesic(poradi=current_month, rok=current_year)
+        db.session.add(mesic)
+        db.session.commit()
+        skip_counter = 0
+        den_ids = []
+        for keys, values in dny.items():
+            if int(keys.split('.')[1]) == int(current_month):
+                den = Den(poradi=int(keys.split('.')[0]), nazev=values, mesic=mesic.id)
+                db.session.add(den)
+                db.session.commit()
+                den_ids.append(den.id)
+            else:
+                skip_counter += 1
+        counter = 0
+        regex = re.compile(r'Oběd \d')
+        numberRegex = re.compile(r'\d')
+        myNumber = 0
+        myNumber2 = 3
+        for idx, i in enumerate(jidelnicek_jidlo):
+            cont = False
+            while_counter = 2
+            while counter > idx and while_counter != 0:
+                while_counter -= 1
+                cont = True
+            if cont:
+                continue
+            try:
+                myRegex = regex.search(i.text)
+                myNumber = numberRegex.search(myRegex.group()).group()
+            except:
+                pass
+            if type(i) is str:
+                continue
+            if int(myNumber) != int(myNumber2) + 1 and int(myNumber2) != 3:
+                obed = "Oběd " + str(int(myNumber2) + 1) + ", Toto jídlo se dnes nepodává"
+                jidelnicek_jidlo.insert(counter, obed)
+                counter += 1
+                if int(myNumber2) == 1:
+                    obed = "Oběd 3, Toto jídlo se dnes nepodává"
+                    jidelnicek_jidlo.insert(counter, obed)
+                    counter += 1
+            myNumber2 = numberRegex.search(myRegex.group()).group()
+            counter += 1
+        jidlo = []
+        for i in jidelnicek_jidlo:
+            if type(i) is str:
+                jidlo.append(i.split(',')[0])
+                jidlo.append(i.split(',')[1])
+            else:
+                split_text = i.text.split('                    ')
+                jidlo.append(split_text[0].strip())
+                jidlo.append(split_text[5].strip())  # Jídla
+        counter = 0
+        day_counter = 0
+
+        for keys, values in dny.items():
+            if skip_counter == 0:
+                if jidlo[counter].startswith("Oběd 1"):
+                    if jidlo[counter + 1] == " Toto jídlo se dnes nepodává":
+                        nejidlo = 1
+                    else:
+                        nejidlo = 0
+                    jidlo_db = Jidlo(cislo=1, nazev=jidlo[counter + 1], obrazek='jidlo.png', den=den_ids[day_counter], nejidlo=nejidlo)
+                    db.session.add(jidlo_db)
+                    db.session.commit()
+                    jidla.append("A" + jidlo[counter + 1])
+                    counter += 2
+                if jidlo[counter].startswith("Oběd 2"):
+                    if jidlo[counter + 1] == " Toto jídlo se dnes nepodává":
+                        nejidlo = 1
+                    else:
+                        nejidlo = 0
+                    jidlo_db = Jidlo(cislo=2, nazev=jidlo[counter + 1], obrazek='jidlo.png', den=den_ids[day_counter], nejidlo=nejidlo)
+                    db.session.add(jidlo_db)
+                    db.session.commit()
+                    jidla.append("B" + jidlo[counter + 1])
+                    counter += 2
+                if jidlo[counter].startswith("Oběd 3"):
+                    if jidlo[counter + 1] == " Toto jídlo se dnes nepodává":
+                        nejidlo = 1
+                    else:
+                        nejidlo = 0
+                    jidlo_db = Jidlo(cislo=3, nazev=jidlo[counter + 1], obrazek='jidlo.png', den=den_ids[day_counter], nejidlo=nejidlo)
+                    db.session.add(jidlo_db)
+                    db.session.commit()
+                    jidla.append("C" + jidlo[counter + 1])
+                    counter += 2
+                    day_counter += 1
+            else:
+                skip_counter -= 1
+                counter += 6
+        return jidla
+    except requests.exceptions.ConnectionError:
+        return None;
+
+
+def new_day():
+    now = datetime.now()
+    current_day = now.day
+    current_day_week = now.weekday()
+    current_month = now.month
+    current_year = now.year
+
+    jidla = Jidlo.query.join(Den).join(Mesic).filter(Mesic.rok == current_year, Mesic.poradi == current_month,
+                                                     Den.poradi == current_day)
+
+    if current_day_week == 0:
+        den_v_tydnu = 'Pondělí'
+    elif current_day_week == 1:
+        den_v_tydnu = 'Úterý'
+    elif current_day_week == 2:
+        den_v_tydnu = 'Středa'
+    elif current_day_week == 3:
+        den_v_tydnu = 'Čtvrtek'
+    elif current_day_week == 4:
+        den_v_tydnu = 'Pátek'
+
+    day = Day(den_v_tydnu=den_v_tydnu)
+    db.session.add(day)
+    db.session.commit()
+
+    for jidlo in jidla:
+        post = Post(jidlo=jidlo.nazev, cislo=jidlo.cislo, day=day, picture="plate.png")
+        db.session.add(post)
+        db.session.commit()
 
 
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(func=print_date_time, trigger="interval", seconds=3)
+scheduler.add_job(save_meals, "cron", month="1-5, 8-12", day="last fri")
+scheduler.add_job(new_day, "cron", month="1-6, 9-12", day_of_week='mon-fri', hour=11, minute=30)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
-'''
+
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///admin.db'
 app.config['SECRET_KEY'] = 'f874123aa5dsf84af'
@@ -247,7 +396,6 @@ class User(db.Model, UserMixin):
     icanteen = db.Column(db.String(20))
     icanteen_heslo = db.Column(db.String(20))
     password = db.Column(db.String(60), nullable=False)
-    posts = db.relationship('Post', backref='author', lazy=True)
     ratings = db.relationship('Rating', backref='author', lazy=True)
     hlasky = db.relationship('Hlaska', backref='author', lazy=True)
     comments = db.relationship('Comment', backref='author', lazy=True)
@@ -623,7 +771,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(160), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    day_id = db.Column(db.Integer, db.ForeignKey('day.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
@@ -671,29 +819,31 @@ class Hlaska(db.Model, UserMixin):
         return f"Post('{self.date_posted, self.ucitel}')"
 
 
-class Post(db.Model, UserMixin):
+class Day(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(50), nullable=False)
-    content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    picture = db.Column(db.String(20))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    jidlo = db.Column(db.String(50), nullable=False)
+    den_v_tydnu = db.Column(db.String(20))
     comments = db.relationship('Comment', backref='article', lazy=True, cascade="all, delete-orphan")
-    likes = db.relationship('PostLike', backref='post', lazy='dynamic')
-    loves = db.relationship('PostLove', backref='post', lazy='dynamic')
-    confuses = db.relationship('PostConfused', backref='post', lazy='dynamic')
-    angry = db.relationship('PostAngry', backref='post', lazy='dynamic')
-    surprise = db.relationship('PostSurprised', backref='post', lazy='dynamic')
-    sad = db.relationship('PostSad', backref='post', lazy='dynamic')
-    laugh = db.relationship('PostLaugh', backref='post', lazy='dynamic')
-    rating_overall = db.Column(db.Integer)
-    rating_count = db.Column(db.Integer)
-    rating = db.Column(db.String(5))
-    ratings = db.relationship('Rating', backref='post_author', lazy=True)
+    posts = db.relationship('Post', backref='day', lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f"Post('{self.title}', '{self.date_posted}')"
+        return f"Den('{self.den_v_tydnu}', '{self.date_posted.strftime('%d.%m.')}')"
+
+
+class Post(db.Model, UserMixin):
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    id = db.Column(db.Integer, primary_key=True)
+    picture = db.Column(db.String(200))
+    jidlo = db.Column(db.String(500), nullable=False)
+    rating_overall = db.Column(db.Integer)
+    rating_count = db.Column(db.Integer)
+    rating = db.Column(db.String(5), default=0.0)
+    ratings = db.relationship('Rating', backref='post_author', lazy=True, cascade="all, delete-orphan")
+    days = db.Column(db.Integer, db.ForeignKey('day.id'), nullable=False)
+    cislo = db.Column(db.Integer)
+
+    def __repr__(self):
+        return f"Post('{self.jidlo}', '{self.rating}')"
 
 
 class Rating(db.Model, UserMixin):
@@ -701,6 +851,39 @@ class Rating(db.Model, UserMixin):
     post = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     count = db.Column(db.String(10))
+
+
+class Mesic(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    poradi = db.Column(db.Integer)
+    rok = db.Column(db.Integer)
+    dny = db.relationship('Den', backref='Mesic', lazy=True, cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f"({self.poradi}. {self.rok})"
+
+
+class Den(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    poradi = db.Column(db.Integer)
+    nazev = db.Column(db.String(50))
+    mesic = db.Column(db.Integer, db.ForeignKey('mesic.id'), nullable=False)
+    jidla = db.relationship('Jidlo', backref='Den', lazy=True, cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f"({self.nazev}), {self.poradi}. {self.Mesic.poradi}. {self.Mesic.rok}"
+
+
+class Jidlo(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    cislo = db.Column(db.Integer)
+    nazev = db.Column(db.String(500))
+    obrazek = db.Column(db.String(1000))
+    den = db.Column(db.Integer, db.ForeignKey('den.id'), nullable=False)
+    nejidlo = db.Column(db.Integer)
+
+    def __repr__(self):
+        return f"({self.cislo}. Oběd, {self.nazev   })"
 
 
 class MyModelView(ModelView):
@@ -714,6 +897,7 @@ class MyModelView(ModelView):
 
 admin = Admin(app)
 admin.add_view(MyModelView(User, db.session))
+admin.add_view(MyModelView(Day, db.session))
 admin.add_view(MyModelView(Post, db.session))
 admin.add_view(MyModelView(Rating, db.session))
 admin.add_view(MyModelView(Comment, db.session))
@@ -721,6 +905,9 @@ admin.add_view(MyModelView(Priznani, db.session))
 admin.add_view(MyModelView(CommentPriznani, db.session))
 admin.add_view(MyModelView(Hlaska, db.session))
 admin.add_view(MyModelView(CommentHlaska, db.session))
+admin.add_view(MyModelView(Mesic, db.session))
+admin.add_view(MyModelView(Den, db.session))
+admin.add_view(MyModelView(Jidlo, db.session))
 
 
 @app.route('/rate')
@@ -763,7 +950,7 @@ def rate_meal():
     if post.rating_count != 0:
         post.rating = str(round(post.rating_overall / post.rating_count / 10, 1))
     else:
-        post.rating = 0
+        post.rating = 0.0
     db.session.commit()
     return jsonify(html_id=html_id, rating=post.rating, poust_id=post.id)
 
@@ -792,7 +979,9 @@ def like_action():
         action = "like"
     this_id = "#" + str(this_id)
     new_text_id = "#spanlike" + str(post_id)
-    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
+    vy_id = "#dropup-content" + post_id + "like"
+    delete = 'delete' + post_id + "like"
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action, vy_id=vy_id, delete=delete)
 
 
 @app.route('/love')
@@ -819,7 +1008,9 @@ def love_action():
         action = "love"
     this_id = "#" + str(this_id)
     new_text_id = "#spanlove" + str(post_id)
-    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
+    vy_id = "#dropup-content" + post_id + "love"
+    delete = 'delete' + post_id + "love"
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action, vy_id=vy_id, delete=delete)
 
 
 @app.route('/confuse')
@@ -846,7 +1037,9 @@ def confuse_action():
         action = "confuse"
     this_id = "#" + str(this_id)
     new_text_id = "#spanconfuse" + str(post_id)
-    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
+    vy_id = "#dropup-content" + post_id + "confuse"
+    delete = 'delete' + post_id + "confuse"
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action, vy_id=vy_id, delete=delete)
 
 
 @app.route('/angry')
@@ -873,7 +1066,9 @@ def angry_action():
         action = "angry"
     this_id = "#" + str(this_id)
     new_text_id = "#spanangry" + str(post_id)
-    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
+    vy_id = "#dropup-content" + post_id + "angry"
+    delete = 'delete' + post_id + "angry"
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action, vy_id=vy_id, delete=delete)
 
 
 @app.route('/surprise')
@@ -900,7 +1095,9 @@ def surprise_action():
         action = "surprise"
     this_id = "#" + str(this_id)
     new_text_id = "#spansurprise" + str(post_id)
-    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
+    vy_id = "#dropup-content" + post_id + "surprise"
+    delete = 'delete' + post_id + "surprise"
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action, vy_id=vy_id, delete=delete)
 
 
 @app.route('/sad')
@@ -927,7 +1124,9 @@ def sad_action():
         action = "sad"
     this_id = "#" + str(this_id)
     new_text_id = "#spansad" + str(post_id)
-    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action)
+    vy_id = "#dropup-content" + post_id + "sad"
+    delete = 'delete' + post_id + "sad"
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text, new_text_id=new_text_id, action=action, vy_id=vy_id, delete=delete)
 
 
 @app.route('/laugh')
@@ -954,7 +1153,9 @@ def laugh_action():
         action = "laugh"
     this_id = "#" + str(this_id)
     new_text_id = "#spanlaugh" + str(post_id)
-    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text,new_text_id=new_text_id, action=action)
+    vy_id = "#dropup-content" + post_id + "laugh"
+    delete = 'delete' + post_id + "laugh"
+    return jsonify(this_id=this_id, div_class=div_class, add_or_remove=add_or_remove, new_text=new_text,new_text_id=new_text_id, action=action, vy_id=vy_id, delete=delete)
 
 
 @app.route('/like_priznani/<int:post_id>/<action>')
@@ -1140,10 +1341,11 @@ def laugh_hlaska_action(post_id, action):
     return redirect(request.referrer)
 
 
+
+
 @app.route("/")
 def home():
     if current_user.is_authenticated:
-        posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=1, per_page=2)
         now = datetime.now()
         now_time = now.time()
         if datetime.today().weekday() == 4:
@@ -1155,13 +1357,68 @@ def home():
         elif datetime.today().weekday() == 6:
             kolik_je = "Zítřejší obědy:"
             counter = 0
-        elif now_time > time(15, 00):
+        elif now_time > time(14, 30):
             kolik_je = r"Zítřejší obědy:"
             counter = 1
         else:
             kolik_je = "Dnešní obědy:"
             counter = 0
-        return render_template('home.html', posts=posts,  dnesni_jidla=dnesni_jidla(), link="home", counter=counter, kolik_je=kolik_je, vybrane_jidla_mesic=vybrane_jidla_mesic())
+
+        current_year = now.year
+        current_month = now.month
+        current_day = now.day
+
+        if current_month == 1 or current_month == 3 or current_month == 5 or current_month == 7 or current_month == 8 or current_month == 10 or current_month == 12:
+            monthshift = 31
+        elif current_month == 4 or current_month == 6 or current_month == 9 or current_month == 11:
+            monthshift = 30
+        elif current_month == 4:
+            monthshift = 28
+
+        saturday = current_day + 2
+        sunday = current_day + 1
+        friday = current_day + 3
+        afternoon = current_day + 1
+        if monthshift == current_day:
+            saturday = 2
+            sunday = 1
+            friday = 3
+            afternoon = 1
+
+            current_month += 1
+        elif monthshift - 1 == current_day:
+            saturday = 1
+            friday = 2
+
+            current_month += 1
+        elif monthshift - 2 == current_day:
+            friday = 1
+
+            current_month += 1
+
+        if datetime.today().weekday() == 5:
+            dnesni_jidla = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == saturday,
+                                                                       Mesic.poradi == current_month,
+                                                                       Mesic.rok == current_year)
+        elif datetime.today().weekday() == 6:
+            dnesni_jidla = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == sunday,
+                                                                       Mesic.poradi == current_month,
+                                                                       Mesic.rok == current_year)
+        elif now_time > time(14, 30) and datetime.today().weekday() == 4:
+            dnesni_jidla = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == friday,
+                                                                       Mesic.poradi == current_month,
+                                                                       Mesic.rok == current_year)
+        elif now_time > time(14, 30):
+            dnesni_jidla = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == afternoon,
+                                                                       Mesic.poradi == current_month,
+                                                                       Mesic.rok == current_year)
+        else:
+            dnesni_jidla = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == current_day,
+                                                                    Mesic.poradi == current_month,
+                                                                    Mesic.rok == current_year)
+
+        print(vybrane_jidla_mesic())
+        return render_template('home.html', dnesni_jidla=dnesni_jidla, link="home", counter=counter, kolik_je=kolik_je, vybrane_jidla_mesic=vybrane_jidla_mesic())
     else:
         return render_template('not_registered.html')
 
@@ -1169,15 +1426,26 @@ def home():
 @app.route("/jidla")
 @login_required
 def jidla():
-    posts = Post.query.order_by(Post.date_posted.desc())
+    posts = Post.query.order_by(Post.date_posted)
     now = datetime.now()
     now_time = now.time()
-    if now_time < time(11, 30) or (datetime.today().weekday() == 5 or datetime.today().weekday() == 6):
+    if now_time < time(13, 00) or (datetime.today().weekday() == 5 or datetime.today().weekday() == 6):
         cas = 0
     else:
         cas = 1
     ratings = Rating.query.filter_by(author=current_user)
-    return render_template('vybrani_jidel.html', meals=get_jidla(), link="jidla", vybrane_jidla_mesic=vybrane_jidla_mesic(), posts=posts, cas=cas, title="Projekt Jídelna - Výběr jídel", ratings=ratings)
+
+    if datetime.today().weekday() == 4:
+        meals = Jidlo.query.join(Den).join(Mesic).filter(Mesic.rok == now.year, Mesic.poradi >= now.month, Den.poradi > now.day + 3)
+    elif datetime.today().weekday() == 5:
+        meals = Jidlo.query.join(Den).join(Mesic).filter(Mesic.rok == now.year, Mesic.poradi >= now.month, Den.poradi > now.day + 2)
+    elif datetime.today().weekday() == 6:
+        meals = Jidlo.query.join(Den).join(Mesic).filter(Mesic.rok == now.year, Mesic.poradi >= now.month, Den.poradi > now.day + 1)
+    elif cas == 0:
+        meals = Jidlo.query.join(Den).join(Mesic).filter(Mesic.rok == now.year, Mesic.poradi >= now.month, Den.poradi > now.day)
+    else:
+            meals = Jidlo.query.join(Den).join(Mesic).filter(Mesic.rok == now.year, Mesic.poradi <= now.month, Den.poradi > now.day + 1)
+    return render_template('vybrani_jidel.html', meals=meals, link="jidla", vybrane_jidla_mesic=vybrane_jidla_mesic(), posts=posts, cas=cas, title="Projekt Jídelna - Výběr jídel", ratings=ratings)
 
 
 @app.route("/vyber_jidel", methods=['GET', 'POST'])
@@ -1216,6 +1484,8 @@ def vyber_jidel():
                 vybrane_jidla.append(counter)
                 chosen = True
             counter += 1
+    if not chosen:
+        vybrane_jidla.append(0)
     try:
         from selenium.webdriver.firefox.options import Options as FirefoxOptions
         options = FirefoxOptions()
@@ -1236,40 +1506,125 @@ def vyber_jidel():
     mesic = driver.find_elements_by_class_name('mainMenu')[2]
     mesic.click()
     now = datetime.now()
+    current_day = now.day
+    current_month = now.month
+    current_year = now.year
+    jidla = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == current_day, Mesic.poradi == current_month, Mesic.rok == current_year)
     now_time = now.time()
-    counter = 3
-    for i in range(1, 35):
+    if current_month == 1 or current_month == 3 or current_month == 5 or current_month == 7 or current_month == 8 or current_month == 10 or current_month == 12:
+        monthshift = 31
+    elif current_month == 4 or current_month == 6 or current_month == 9 or current_month == 11:
+        monthshift = 30
+    elif current_month == 4:
+        monthshift = 28
+
+    saturday = current_day+2
+    sunday = current_day+1
+    friday = current_day+3
+    afternoon = current_day+1
+    if monthshift == current_day:
+        saturday = 2
+        sunday = 1
+        friday = 3
+        afternoon = 1
+
+        current_month += 1
+    elif monthshift-1 == current_day:
+        saturday = 1
+        friday = 2
+
+        current_month += 1
+    elif monthshift-2 == current_day:
+        friday = 1
+
+        current_month += 1
+
+    if datetime.today().weekday() == 5:
+        jidla_odpoledne = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == saturday, Mesic.poradi == current_month, Mesic.rok == current_year)
+    elif datetime.today().weekday() == 6:
+        jidla_odpoledne = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == sunday, Mesic.poradi == current_month, Mesic.rok == current_year)
+    elif now_time > time(13, 00) and datetime.today().weekday() == 4:
+        jidla_odpoledne = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == friday, Mesic.poradi == current_month, Mesic.rok == current_year)
+    elif now_time > time(13, 00):
+        jidla_odpoledne = Jidlo.query.join(Den).join(Mesic).filter(Den.poradi == afternoon, Mesic.poradi == current_month, Mesic.rok == current_year)
+
+    if datetime.today().weekday() == 5 or datetime.today().weekday() == 6:
+        counter = 0
+    else:
+        counter = 3
+        for jidlo in jidla:
+            if jidlo.nazev == " Toto jídlo se dnes nepodává":
+                counter -= 1
+
+    if jidla_odpoledne:
+        counter += 3
+        for jidlo in jidla_odpoledne:
+            if jidlo.nazev == " Toto jídlo se dnes nepodává":
+                counter -= 1
+
+    if datetime.today().weekday() == 5 or datetime.today().weekday() == 6:
+        time_shift = 1
+    elif now_time > time(13, 00):
+        time_shift = 2
+    else:
+        time_shift = 1
+    current_day = now.day
+    aktualni_mesic = now.month
+    jidla_tento_mesic = Jidlo.query.join(Den).join(Mesic).filter(Mesic.rok == current_year,
+                                                                 Mesic.poradi == aktualni_mesic,
+                                                                 Den.poradi > current_day).order_by(Den.poradi)
+    pocet_jidel = []
+
+    counter_2 = 3
+    aktualni_den = 0
+    for i in jidla_tento_mesic:
+        if not pocet_jidel and aktualni_den == 0:
+            aktualni_den = i.Den.poradi
+
+        if aktualni_den != i.Den.poradi:
+            pocet_jidel.append(counter_2)
+            aktualni_den = i.Den.poradi
+            counter_2 = 3
+        if i.nazev == " Toto jídlo se dnes nepodává":
+            counter_2 -= 1
+
+    index = 0
+    for i in range(time_shift, 30):
         string = 'group' + str(i)
         vybrane_jidlo_ = request.form.get(string)
         if vybrane_jidlo_ is not None and int(vybrane_jidlo_) != vybrane_jidla[i] and int(vybrane_jidlo_) != 4:
-            jidlo = driver.find_elements_by_css_selector('.btn.button-link.button-link-main')[counter + int(vybrane_jidlo_)-1]  # 6 == 3. den 1. oběd
+            jidlo = driver.find_elements_by_css_selector('.btn.button-link.button-link-main')[counter-1 + int(vybrane_jidlo_)]  # CAREFUL
 
             try:
                 jidlo.click()
             except Exception as e:
                 print(e)
-            sleep(.5)
+            sleep(1)
         elif vybrane_jidlo_ is not None and int(vybrane_jidlo_) == 4:
             if vybrane_jidla[i] != 0:
-                jidlo = driver.find_elements_by_css_selector('.btn.button-link.button-link-main')[counter + vybrane_jidla[i]-1]
+                jidlo = driver.find_elements_by_css_selector('.btn.button-link.button-link-main')[counter-1 + vybrane_jidla[i]]
                 try:
                     jidlo.click()
                 except Exception as e:
                     print(e)
                 sleep(1)
 
-        counter += 3
+        try:
+            counter += pocet_jidel[time_shift-1 + index]
+        except:
+            pass
+        index += 1
     flash('Tvoje obědy jsou nyní uloženy.', 'success')
     driver.close()
     return redirect(request.referrer)
 
 
-@app.route('/comment/<int:post_id>', methods=['GET', 'POST'])
+@app.route('/comment/<int:day_id>', methods=['GET', 'POST'])
 @login_required
-def comment(post_id):
+def comment(day_id):
     form = CommentForm()
     if form.validate_on_submit():
-        comment = Comment(body=form.content.data, post_id=post_id, author=current_user)
+        comment = Comment(body=form.content.data, day_id=day_id, author=current_user)
         db.session.add(comment)
         db.session.commit()
     return redirect(request.referrer)
@@ -1351,7 +1706,7 @@ def delete_hlaska(post_id):
         flash('Tvoje hláška byla smazáno!', 'success')
     return redirect(request.referrer)
 
-
+'''
 @app.route("/recenze", methods=['GET', 'POST'])
 @login_required
 def recenze():
@@ -1388,7 +1743,21 @@ def recenze():
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=6)
     comments = Comment.query.all()
     ratings = Rating.query.filter_by(author=current_user)
-    return render_template('recenze.html', title='Projekt Jídelna - Recenze', form=form, link="recenze", posts=posts, comments=comments, commentForm=commentForm, ratings=ratings)
+    return render_template('recenze.html', title='Projekt Jídelna - Recenze', form=form, link="recenze", posts=posts, comments=comments, commentForm=commentForm, ratings=ratings)'''
+
+
+@app.route("/recenze", methods=['GET', 'POST'])
+@login_required
+def recenze():
+    form = PostForm()
+    commentForm = CommentForm()
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.all()
+    comments = Comment.query.all()
+    ratings = Rating.query.filter_by(author=current_user)
+    days = Day.query.order_by(Day.date_posted.desc()).paginate(page=page, per_page=6)
+
+    return render_template('recenze_2.html', title='Projekt Jídelna - Recenze_2', form=form, link="recenze_2", days=days, posts=posts, comments=comments, commentForm=commentForm, ratings=ratings)
 
 
 @app.route("/search")
@@ -1414,7 +1783,8 @@ def search():
 
     commentForm = CommentForm()
     comments = Comment.query.all()
-    return render_template("search.html", posts=vyhledane_posty, comments=comments, commentForm=commentForm, link="search", form=form)
+    ratings = Rating.query.filter_by(author=current_user)
+    return render_template("search.html", posts=vyhledane_posty, comments=comments, commentForm=commentForm, link="search", form=form, ratings=ratings)
 
 
 @app.route("/priznani", methods=['GET', 'POST'])
@@ -1437,6 +1807,17 @@ def priznani():
     comments = CommentPriznani.query.all()
     return render_template('priznani.html', title='Přiznání MGO', form=form, link="priznani", posts=posts, comments=comments, commentForm=commentForm)
 
+
+@app.route("/test")
+def test():
+    from pyvirtualdisplay import Display
+    from selenium.webdriver.firefox.options import Options as FirefoxOptions
+    with Display():
+        options = FirefoxOptions()
+        options.add_argument("--headless")
+        driver = webdriver.Firefox(executable_path='/home/Pavlyuchenko/mysite/static/geckodriver.exe')
+        driver.quit()
+    return render_template('about.html')
 
 @app.route("/kontakt")
 def about():
@@ -1604,7 +1985,12 @@ def html():
     return render_template('html.html', title='HTML Tagy', link='tutorial')
 
 
-def get_jidla():
+@app.route("/moderni_vyzvy_lidstva")
+def mod_vyz_lid():
+    return render_template('index.html')
+
+
+'''def get_jidla():
     jidla = []
 
     try:
@@ -1615,7 +2001,6 @@ def get_jidla():
         jidelnicek_datum = soup.select('div .jidelnicekDen div strong .important')  # list datumů
         jidelnicek_den = soup.select('div .jidelnicekDen div strong span')  # list dnů v týdnu
         jidelnicek_jidlo = soup.select('div .jidelnicekDen div div')
-
         dny = {}
 
         for datum in jidelnicek_datum:
@@ -1633,16 +2018,55 @@ def get_jidla():
             dny[i] = dnyvtydnu[counter]  # Přidá k datům názvy dnů
             counter += 1
 
+        now = datetime.now()
+        now_time = now.time()
+
+
+        counter = 0
+        regex = re.compile(r'Oběd \d')
+        numberRegex = re.compile(r'\d')
+        myNumber = 0
+        myNumber2 = 3
+        for idx, i in enumerate(jidelnicek_jidlo):
+            cont = False
+            while_counter = 2
+            while counter > idx and while_counter != 0:
+                while_counter -= 1
+                cont = True
+            if cont:
+                continue
+            try:
+                myRegex = regex.search(i.text)
+                myNumber = numberRegex.search(myRegex.group()).group()
+            except:
+                pass
+
+            if type(i) is str:
+                continue
+
+            if int(myNumber) != int(myNumber2) + 1 and int(myNumber2) != 3:
+                obed = "Oběd " + str(int(myNumber2)+1) + ", Toto jídlo se dnes nepodává"
+                jidelnicek_jidlo.insert(counter, obed)
+                counter += 1
+                if int(myNumber2) == 1:
+                    obed = "Oběd 3, Toto jídlo se dnes nepodává"
+                    jidelnicek_jidlo.insert(counter, obed)
+                    counter += 1
+            myNumber2 = numberRegex.search(myRegex.group()).group()
+            counter += 1
+
         jidlo = []
         for i in jidelnicek_jidlo:
-            split_text = i.text.split('                    ')
-            jidlo.append(split_text[0].strip())
-            jidlo.append(split_text[5].strip())  # Jídla
+            if type(i) is str:
+                jidlo.append(i.split(',')[0])
+                jidlo.append(i.split(',')[1])
+            else:
+                split_text = i.text.split('                    ')
+                jidlo.append(split_text[0].strip())
+                jidlo.append(split_text[5].strip())  # Jídla
 
         counter = 0
         remove_first_two_meals = 0
-        now = datetime.now()
-        now_time = now.time()
         if now_time < time(11, 30) or (datetime.today().weekday() == 5 or datetime.today().weekday() == 6):
             prvni_den_ven = 0
         else:
@@ -1663,12 +2087,13 @@ def get_jidla():
                     jidla.append("C" + jidlo[counter + 1])
                 counter += 2
             remove_first_two_meals += 1
+
         return jidla
     except requests.exceptions.ConnectionError:
-        return None;
+        return None;'''
 
 
-def dnesni_jidla():
+'''def dnesni_jidla():
     now = datetime.now()
     now_time = now.time()
     if current_user.icanteen or ((datetime.today().weekday() == 4 and current_user.icanteen) or (datetime.today().weekday() == 5 and current_user.icanteen) or (datetime.today().weekday() == 6 and current_user.icanteen)):
@@ -1729,9 +2154,11 @@ def dnesni_jidla():
                         jidelnicek_jidlo = soup.select('div .jidelnicekDen div div')
 
                         jidlo = []
-
-                        for i in range(3):
-                            jidlo.append(jidelnicek_jidlo[i].text.split('                    ')[5].strip())
+                        try:
+                            for i in range(3):
+                                jidlo.append(jidelnicek_jidlo[i].text.split('                    ')[5].strip())
+                        except:
+                            return ["Nejspíš máš špatně zadané iCanteenID nebo iCanteen heslo", "Je však taky možné, že spadly jídelně servery", "Zkontroluj zady: https://jidelna.mgo.opava.cz: 6204/faces/login.jsp"]
 
                         dates = soup.select(
                             'div #day-%s span' % strftime("%Y-%m-%d", gmtime()))  # list divu s dnešním datem
@@ -1749,7 +2176,7 @@ def dnesni_jidla():
             else:
                 return ["Nejspíš máš špatně zadané iCanteenID nebo iCanteen heslo", "Je však taky možné, že spadly jídelně servery", "Zkontroluj zady: https://jidelna.mgo.opava.cz: 6204/faces/login.jsp"]
     else:
-        return ["Nejspíš máš špatně zadané iCanteenID nebo iCanteen heslo", "Je však taky možné, že spadly jídelně servery", "Zkontroluj zady: https://jidelna.mgo.opava.cz: 6204/faces/login.jsp"]
+        return ["Nejspíš máš špatně zadané iCanteenID nebo iCanteen heslo", "Je však taky možné, že spadly jídelně servery", "Zkontroluj zady: https://jidelna.mgo.opava.cz: 6204/faces/login.jsp"]'''
 
 
 def vybrane_jidlo():
@@ -1832,5 +2259,5 @@ def vybrane_jidla_mesic():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(threaded=True)
 # set FLASK_APP=main.py

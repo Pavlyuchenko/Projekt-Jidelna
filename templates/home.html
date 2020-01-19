@@ -13,28 +13,7 @@
     {% endwith %}
 <div class="first-divs">
     <div class="home-recenze">
-        <h1 class="recenze-h1">Poslední recenze:</h1>
-        <img class="content-line" src="{{ url_for('static', filename='line_white.png')}}" alt="Čára">
-        <div class="posts">
-            {% for post in posts.items %}
-                <div class="post">
-                    <div class="home-figure">
-                        <figure>
-                            <img class="recenze-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}" alt="Profilovka"/>
-                            <figcaption class="img-text">{{ post.author.name }}</figcaption>
-                        </figure>
-                    </div>
-                    <div class="post-content">
-                        <h2 class="recenze-title">{{ post.title }}</h2>
-                        <p style="float: right; margin-top: -7%; color: #19A7D8;">{{ post.date_posted.strftime('%d.%m.%Y') }}</p>
-                        <p style="float: right; margin-top: -4.5%; color: #19A7D8;">{{ post.date_posted.strftime('%H:%M') }}</p>
-                        <img style="float:right;" class="recenze-img-jidlo" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="Jídlo"/>
-                        <p style="color: #9D9D9D;">{{ post.content|safe }}</p>
-                        <div class="recenze-hodnoceni"></div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+
     </div>
 
     <div class="home-dnesni-jidla">
@@ -44,54 +23,27 @@
             <p>Jídeně nejspíš spadly servery. Amatéři.</p>
             <p>Pokud si nevíš rady, koukni se na <a href="{{ url_for('.about') }}">tutoriál</a></p>
         {% else %}
-            {% if dnesni_jidla[0].startswith("DNESKA SE NEVAŘÍ") %}
-                <span class="content-p" style="margin-top: 3%;">
-                    <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_1.png')}}" alt="Talíř">
-                    <p style="padding-right: 5%; padding-top: 3%;">{{ dnesni_jidla[0] }}</p>
-                </span>
-                <span class="content-p">
-                    <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_2.png')}}" alt="Talíř">
-                    <p style="padding-right: 5%; padding-top: 3%;">{{ dnesni_jidla[1] }}</p>
-                </span>
-                <span class="content-p-3-2">
-                    <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_3.png')}}" alt="Talíř">
-                    <p style="padding-right: 5%; padding-top: 3%;">{{ dnesni_jidla[2] }}</p>
-                </span>
-            {% else %}
-                {% if vybrane_jidla_mesic[counter] == 1 %}
+            {% for jidlo in dnesni_jidla %}
+                {% if vybrane_jidla_mesic[counter] == loop.index %}
                     <span class="content-p-1-green" style="margin-top: 3%;">
-                        <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_1_green.png')}}" alt="Talíř">
-                        <p style="padding-right: 5%; padding-top: 3%;">{{ dnesni_jidla[0] }}</p>
+                        <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_' + loop.index|string + '_green.png')}}" alt="Talíř">
+                        {% if jidlo.nazev == " Toto jídlo se dnes nepodává" %}
+                            <p style="padding-right: 5%; padding-top: 3%;">{{ jidlo.nazev * 4 }}</p>
+                        {% else %}
+                            <p style="padding-right: 5%; padding-top: 3%;">{{ jidlo.nazev }}</p>
+                        {% endif %}
                     </span>
                 {% else %}
                     <span class="content-p-1" style="margin-top: 3%;">
-                        <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_1.png')}}" alt="Talíř">
-                        <p style="padding-right: 5%; padding-top: 3%;">{{ dnesni_jidla[0] }}</p>
+                        <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_' + loop.index|string + '.png')}}" alt="Talíř">
+                        {% if jidlo.nazev == " Toto jídlo se dnes nepodává" %}
+                            <p style="padding-right: 5%; padding-top: 3%;">{{ jidlo.nazev * 4 }}</p>
+                        {% else %}
+                            <p style="padding-right: 5%; padding-top: 3%;">{{ jidlo.nazev }}</p>
+                        {% endif %}
                     </span>
                 {% endif %}
-                {% if vybrane_jidla_mesic[counter] == 2 %}
-                    <span class="content-p-2-green">
-                        <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_2_green.png')}}" alt="Talíř">
-                        <p style="padding-right: 5%; padding-top: 3%;">{{ dnesni_jidla[1] }}</p>
-                    </span>
-                {% else %}
-                    <span class="content-p-2">
-                        <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_2.png')}}" alt="Talíř">
-                        <p style="padding-right: 5%; padding-top: 3%;">{{ dnesni_jidla[1] }}</p>
-                    </span>
-                {% endif %}
-                {% if vybrane_jidla_mesic[counter] == 3 %}
-                    <span class="content-p-3-green">
-                        <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_3_green.png')}}" alt="Talíř">
-                        <p style="padding-right: 5%; padding-top: 3%;">{{ dnesni_jidla[2] }}</p>
-                    </span>
-                {% else %}
-                    <span class="content-p-3">
-                        <img width="200" height="200" class="content-img" src="{{ url_for('static', filename='stolovani_3.png')}}" alt="Talíř">
-                        <p style="padding-right: 5%; padding-top: 3%;">{{ dnesni_jidla[2] }}</p>
-                    </span>
-                {% endif %}
-            {% endif %}
+            {% endfor %}
         {% endif %}
     </div>
 </div>

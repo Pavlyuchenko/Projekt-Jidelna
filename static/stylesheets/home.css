@@ -30,6 +30,18 @@
     padding: 1%;
     border-radius: 4px;
     float: left;
+    animation: swing-in .5s ease-in-out;
+}
+
+@keyframes swing-in{
+    0%{
+        transform: translateX(-1500px);
+        opacity: .2;
+    }
+    100%{
+        transform: translateX(0px);
+        opacity: 1;
+    }
 }
 
 .recenze-h1{
@@ -115,6 +127,18 @@
     border-radius: 4px;
     width: 32%;
     min-height: 700px;
+    animation: swing-in-right .5s ease-in-out;
+}
+
+@keyframes swing-in-right{
+    0%{
+        transform: translateX(1000px);
+        opacity: .2;
+    }
+    100%{
+        transform: translateX(0px);
+        opacity: 1;
+    }
 }
 
 .dnesni-jidla-h1{

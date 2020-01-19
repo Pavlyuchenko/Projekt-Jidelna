@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="cs-cz">
+    <head>
+        <meta charset="utf-8" />
+        <title>Moderní výzvy lidstva</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='static/style.css')}}">
+        <link href="https://fonts.googleapis.com/css?family=Nunito:600,700,800&display=swap" rel="stylesheet">
+    </head>
+    <body  onload="init()">
+
+        <!-- Navigace -->
+        <nav>
+            <div class="image-container">
+                <img src="{{ url_for('static', filename='img/Moderní_výzvy.png') }}" alt="Logo Moderní Výzvy">
+            </div>
+            <div id="buttons">
+                <a href="#" class="active">Hlavní stránka</a>
+                <a href="#">Přednášky</a>
+            </div>
+        </nav>
+
+
+        <!-- První sekce -->
+        <section id="first-section">
+            <h1 id="section-one-h1" class="lax" data-lax-translate-y="0 0, 600 -400">Moderní výzvy lidstva</h1>
+            <p id="section-one-text" class="lax" data-lax-translate-y="0 0, 1000 -400">Společný přednáškový cyklus Mendelova <br /> Gymnázia a Slezské Univerzity v Opavě</p>
+
+
+            <div class="image-container-new-ideas-square-2 lax" data-lax-translate-y="0 0, 550 -325">
+                <img src="{{ url_for('static', filename='img/1/Square_2.png') }}" alt="Obrázek Nové nápady">
+            </div>
+            <!--Konec-->
+
+            <div class="image-container-new-ideas-borec lax" data-lax-translate-y="0 0, 400 -500">
+                <img src="{{ url_for('static', filename='img/1/Borec_u_gule.png') }}" alt="Obrázek Nové nápady">
+            </div>
+            <!--Konec-->
+            
+            <div class="image-container-new-ideas-zemegule lax" data-lax-translate-y="0 0, 450 -475">
+                <img src="{{ url_for('static', filename='img/1/Zeměgule.png') }}" alt="Obrázek Nové nápady">
+            </div>
+            <!--Konec-->
+            
+            <div class="image-container-new-ideas-square lax" data-lax-translate-y="0 0, 400 -550">
+                <img src="{{ url_for('static', filename='img/1/Square.png') }}" alt="Obrázek Nové nápady">
+            </div>
+            <!--Konec-->
+            
+            <div class="image-container-new-ideas-triangle lax" data-lax-translate-y="0 0, 500 -450">
+                <img src="{{ url_for('static', filename='img/1/Triangle.png') }}" alt="Obrázek Nové nápady">
+            </div>
+            <!--Konec-->
+
+
+            <div class="line lax" data-lax-translate-y="0 0, 700 -1000" data-lax-opacity="0 1, 300 0"></div>
+        </section>
+
+
+        <!-- Druhá sekce -->
+        <section id="second-section">
+            <div class="image-container-void-podlaha lax" data-lax-translate-y="200 200, 1900 -175">
+                <img src="{{ url_for('static', filename='img/2/Podlaha.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+            
+
+            <div class="image-container-void-void lax" data-lax-translate-y="200 200, 1600 -150">
+                <img src="{{ url_for('static', filename='img/2/Void_gula.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+
+
+            <div class="image-container-void-borec lax" data-lax-translate-y="200 200, 1600 -300">
+                <img src="{{ url_for('static', filename='img/2/Borec.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+
+
+            <div class="image-container-void-mala lax" data-lax-translate-y="200 300, 1400 -350">
+                <img src="{{ url_for('static', filename='img/2/Mala_gula.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+
+
+            <div class="image-container-void-stredni lax" data-lax-translate-y="200 250, 1550 -275">
+                <img src="{{ url_for('static', filename='img/2/Stredni_gula.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+
+
+            <div class="image-container-void-velka lax" data-lax-translate-y="200 200, 1700 -200">
+                <img src="{{ url_for('static', filename='img/2/Velka_gula.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+
+
+            <div class="image-container-void-vpravo lax" data-lax-translate-y="200 200, 1400 -405">
+                <img src="{{ url_for('static', filename='img/2/Vpravo_gula.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+
+            
+
+            <div class="lax" data-lax-translate-y="400 400, 1800 -300">
+                <h1 id="section-two-h1">Naše doba přínáší výzvy</h1>
+                <p id="section-two-text-1">Svět se proměnil. Intenzivní technologický vývoj v posledních dekádách před nás postavil netušené možnosti.</p>
+                <p id="section-two-text-2">Ve stejné době ovšem stojíme před hrozbou mohutných a nevratných klimatických změn. Podaří se nám zvrátit oteplování zemské atmosféry? Jak ovlivní umělá inteligence zaměstnanost? Rozumíme světu kolem nás? Umíme rozpoznat lež?</p>
+            </div>
+        </section>
+
+
+        <!-- Třetí sekce -->
+        <section id="third-section">
+            <h1 id="section-three-h1" class="lax" data-lax-translate-y="1400 300, 2900 -300">Přednášky špičkových odborníků</h1>
+            <div class="lax" data-lax-translate-y="1400 250, 3000 -150">
+                <p id="section-three-text-1">Jednotlivé přednášky jsou určené jak studentům a pedagogům Mendelova gymnázia a Slezské univerzity, tak i široké veřejnosti z Opavy a okolí. Pro všechny návštěvníky je <span>vstup zdarma</span>.</p>
+                <p id="section-three-text-2">Díky cyklu přednášek získáte základní vhled do geopolitických, klimatických a především etických problémů, které vznikají v souvislosti s exponenciálním technologickým rozvojem, o kterých se zatím ve školních lavicích moc nemluví</p>
+            </div>
+
+            <div class="image-container-new-challenges-povrch lax" data-lax-translate-y="1400 100, 2700 -250">
+                <img src="{{ url_for('static', filename='img/3/Povrch.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+            <!--Konec-->
+
+            <div class="image-container-new-challenges-raketa lax" data-lax-translate-y="1300 350, 2600 -650">
+                <img src="{{ url_for('static', filename='img/3/Raketa.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+            <!--Konec-->
+            
+            <div class="image-container-new-challenges-astronaut lax" data-lax-translate-y="1400 100, 2600 -400">
+                <img src="{{ url_for('static', filename='img/3/Astronaut.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+            <!--Konec-->
+            
+            <div class="image-container-new-challenges-gule-1 lax" data-lax-translate-y="1400 125, 2600 -275">
+                <img src="{{ url_for('static', filename='img/3/Gule_1.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+            <!--Konec-->
+            
+            <div class="image-container-new-challenges-gule-2 lax" data-lax-translate-y="1400 125, 2600 -300">
+                <img src="{{ url_for('static', filename='img/3/Gule_2.png') }}" alt="Obrázek Nové výzvy">
+            </div>
+            <!--Konec-->
+
+
+        </section>
+
+
+        <!-- Čtvrtá sekce -->
+        <section id="fourth-section">
+            <h1 id="section-four-h1">Naše pozvání přijali</h1>
+            <div id="container">
+
+                    <!--První divy-->
+
+                    <div>
+                        <span class="span">24. září 2019</span>
+                        <img src="{{ url_for('static', filename='img/Jan_Sokol.png') }}" alt="Jan Sokol Obrázek">
+                        <span class="h4">prof. PhDr. Jan Sokol, Ph. D, Csc.</span>
+                        <span class="tema">Kdo jsme, odkud přicházíme, kam kráčíme</span>
+                        <button>Zjistit více</button>
+                    </div>
+
+                    <div>
+                        <span class="span">22. října 2019</span>
+                        <img src="{{ url_for('static', filename='img/Michal_Žák.png') }}" alt="Michal Žák Obrázek">
+                        <span class="h4">Mgr. Michal Žák,</span><span class="h4" style="top: 310px;"> Ph.D. Mgr. Daniel Tichý</span>
+                        <span class="tema">Klima a jeho přesah</span>
+                        <button>Zjistit více</button>
+                    </div>
+
+                    <div>
+                        <span class="span">19. listopadu 2019</span>
+                        <img src="{{ url_for('static', filename='img/Tomáš_Němeček.png') }}" alt="Tomáš Němeček Obrázek">
+                        <span class="h4">Mgr. et Mgr. Tomáš Němeček</span>
+                        <span class="tema">Demokracie a její limity</span>
+                        <button>Zjistit více</button>
+                    </div>
+
+                    <!--Druhé divy-->
+
+                    <div>
+                        <span class="span">10. prosince 2019</span>
+                        <img src="{{ url_for('static', filename='img/Zdeněk_Opatrný.png') }}" alt="Jan Sokol Obrázek">
+                        <span class="h4">prof. RNDr. Zdeněk Opatrný, CSc.</span>
+                        <span class="tema">Genetické inženýrství rostlin: věda kontra iracionalita</span>
+                        <button>Zjistit více</button>
+                    </div>
+                    
+                    <div>
+                        <span class="span">21. ledna 2019</span>
+                        <img src="{{ url_for('static', filename='img/Vladimír_Baar.png') }}" alt="Michal Žák Obrázek">
+                        <span class="h4">prof. RNDr. Vladimír Baar, CSc.</span>
+                        <span class="tema">Moc, politika a mezinárodní hrozby</span>
+                        <button>Zjistit více</button>
+                    </div>
+
+                    <div>
+                        <span class="span">25. února 2019</span>
+                        <img src="{{ url_for('static', filename='img/Olga_Štěpánková.png') }}" alt="Tomáš Němeček Obrázek">
+                        <span class="h4">prof. RNDr. Olga Štěpánková, CSc.</span>
+                        <span class="tema">Digitál a reál: na rozhraní světů</span>
+                        <button>Zjistit více</button>
+                    </div>
+
+                    <!--Třetí divy-->
+
+                    <div>
+                        <span class="span">měsíc březen 2019</span>
+                        <img src="{{ url_for('static', filename='img/Tomáš_Sedláček.png') }}" alt="Jan Sokol Obrázek">
+                        <span class="h4">PhDr. Tomáš Sedláček, Ph.D</span>
+                        <span class="tema">Ekonomie dobra a zla</span>
+                        <button>Zjistit více</button>
+                    </div>
+
+                    <div>
+                        <span class="span">7. dubna 2019</span>
+                        <img src="{{ url_for('static', filename='img/Petr_Klán.png') }}" alt="Michal Žák Obrázek">
+                        <span class="h4">doc. Ing. Mgr. Petr Klán, CSc.</span>
+                        <span class="tema">Vysvětlí někdy matematika náš svět?</span>
+                        <button>Zjistit více</button>
+                    </div>
+
+                    <div>
+                        <span class="span">měsíc květen 2019</span>
+                        <img src="{{ url_for('static', filename='img/Daniel_Munich.png') }}" alt="Tomáš Němeček Obrázek">
+                        <span class="h4">doc. Ing. Daniel Münich, Ph.D.</span>
+                        <span class="tema">Kam kráčíš, školství?</span>
+                        <button>Zjistit více</button>
+                    </div>
+
+            </div>
+        </section>
+
+
+        <!-- Pátá sekce -->
+        <section id="fifth-section">
+            <p id="section-five-text">Využijte tuto mimořádnou příležitost, přijďte si poslechnout špičkové české odborníky a diskutovat s nimi o palčivých otázkách naší doby, o moderních výzvách, před kterými stojíme.</p>
+        </section>
+
+
+        <!-- Šestá sekce -->
+        <section id="sixth-section">
+            <h1 id="section-six-h1">Přijďte diskutovat</h1>
+            <h2 id="section-six-h2">1x za měsíc v úterý, od 14:15 hodin</h2>
+            <iframe class="google-map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1148.0495304542724!2d17.896358502066338!3d49.93582459063813!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4713d813fab4cca9%3A0x8a55adcadec85b9d!2sFakulta%20ve%C5%99ejn%C3%BDch%20politik%20v%20Opav%C4%9B!5e1!3m2!1sen!2scz!4v1573230789069!5m2!1sen!2scz" width="500" height="500" frameborder="0" style="border:0;" allowfullscreen></iframe>
+            <p id="section-six-text">Jednotlivé přednášky budou probíhat v prostorách Fakulty veřejných politik Slezské univerzity na Bezručově náměstí v Opavě.</p>
+            <div class="image-container-discussion">
+                <img src="{{ url_for('static', filename='img/Discussion.png') }}" alt="Obrázek Diskuze">
+            </div>
+        </section>
+        
+
+        <!-- Sedmá sekce -->
+        <section id="seventh-section">
+            <h1 id="section-seven-h1">Kontaktujte nás</h1>
+            <h3 id="section-seven-h3">vyzvy@mgoopava.cz</h3>
+            <section id="div-container">
+                <div>
+                    <img src="{{ url_for('static', filename='img/Pavel_Štěpánek.png') }}" alt="Pavel Štěpánek Obrázek">
+                    <h2>Pavel Štěpánek</h2>
+                    <h5>ředitelka MGO</h5>
+                    <p>*1998, absolvent MGO, student medicíny na LF MUNI v Brně, jako středoškolák se zúčastnil soutěží v Thajsku, Rusku, Singapuru a Číně, v roce 2018 získal cenu Nadačního fondu Jaroslava Heyrovského</p>
+                </div>
+                <div>
+                    <img src="{{ url_for('static', filename='img/Monika_Klapková.png') }}" alt="Monika Klapková Obrázek">
+                    <h2>Monika Klapková</h2>
+                    <h5>spoluautor nápadu</h5>
+                    <p>*1967 v Opavě, absolventka, dlouholetá pedagožka a současná ředitelka Mendelova gymnázia v Opavě, členka zastupitelstva v Opavě, vystudovala Pedagogickou fakultu Ostravské univerzity, obor matematika-fyzika</p>
+                </div>
+                <div>
+                    <img src="{{ url_for('static', filename='img/Jana_Prošvicová.png') }}" alt="Jana Prošvicová Obrázek">
+                    <h2>Jana Prošvicová</h2>
+                    <h5>mluvčí projektu</h5>
+                    <p>*1961, pedagožka na MGO, vystudovala FF UP v Olomouci, organizačně se podílí na projektech gymnázia, moderuje akce školy, je držitelka ocenění Výraznná pedagogická osobnost MsK a ceny Nadačního fondu Jaroslava Heyrovského</p>
+                </div>
+                <div>
+                    <img src="{{ url_for('static', filename='img/Josef_Vícha.png') }}" alt="Josef Vícha Obrázek">
+                    <h2>Josef Vícha</h2>
+                    <h5>tajemník FVP SLU</h5>
+                    <p>*1981 v Opavě, absolvoval Matematický ústav Slezské univerzity v Opavě a Fakultu managementu a ekonomiky na UTB ve Zlíně, vedle hospodaření a provozu fakulty se věnuje projektovému řízení, doktorskému studiu historie a výuce statistiky</p>
+                </div>
+            </section>
+        </section>
+
+
+
+        <footer>
+            <div>
+                <img src="{{ url_for('static', filename='img/Slezská_Univerzita.png') }}" alt="Slezská Univerzita Logo">
+                <img src="{{ url_for('static', filename='img/Mendelovo_Gymnázium_Opava.png') }}" alt="Mendelovo Gymnázium Opava Logo">
+                <img src="{{ url_for('static', filename='img/Slezská_Univerzita_Fakulta.png') }}" alt="Slezská Univerzita Fakulta Veřejných Politik Logo">
+            </div>
+            <h1>&copy; 2019 Moderní výzvy lidstva</h1>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/lax.js" ></script>
+
+        <script>
+
+            function init(){
+                lax.setup() // init
+
+                const updateLax = () => {
+                	lax.update(window.scrollY)
+                	window.requestAnimationFrame(updateLax)
+                }
+
+                window.requestAnimationFrame(updateLax)
+                
+	            new SmoothScroll(document,85,20)
+            }
+                
+            function SmoothScroll(target, speed, smooth) {
+            	if (target === document)
+            		target = (document.scrollingElement 
+                          || document.documentElement 
+                          || document.body.parentNode 
+                          || document.body) // cross browser support for document scrolling
+
+            	var moving = false
+            	var pos = target.scrollTop
+                var frame = target === document.body 
+                          && document.documentElement 
+                          ? document.documentElement 
+                          : target // safari is the new IE
+            
+            	target.addEventListener('mousewheel', scrolled, { passive: false })
+            	target.addEventListener('DOMMouseScroll', scrolled, { passive: false })
+            
+            	function scrolled(e) {
+            		e.preventDefault(); // disable default scrolling
+                
+            		var delta = normalizeWheelDelta(e)
+                
+            		pos += -delta * speed
+            		pos = Math.max(0, Math.min(pos, target.scrollHeight - frame.clientHeight)) // limit scrolling
+                
+            		if (!moving) update()
+            	}
+            
+            	function normalizeWheelDelta(e){
+            		if(e.detail){
+            			if(e.wheelDelta)
+            				return e.wheelDelta/e.detail/40 * (e.detail>0 ? 1 : -1) // Opera
+            			else
+            				return -e.detail/3 // Firefox
+            		}else
+            			return e.wheelDelta/120 // IE,Safari,Chrome
+            	}
+            
+            	function update() {
+            		moving = true
+                
+            		var delta = (pos - target.scrollTop) / smooth
+                
+            		target.scrollTop += delta
+                
+            		if (Math.abs(delta) > 0.01)
+            			requestFrame(update)
+            		else
+            			moving = false
+            	}
+            
+            	var requestFrame = function() { // requestAnimationFrame cross browser
+            		return (
+            			window.requestAnimationFrame ||
+            			window.webkitRequestAnimationFrame ||
+            			window.mozRequestAnimationFrame ||
+            			window.oRequestAnimationFrame ||
+            			window.msRequestAnimationFrame ||
+            			function(func) {
+            				window.setTimeout(func, 1000 / 50);
+            			}
+            		);
+            	}()
+            }
+
+            
+
+        </script>
+    </body>
+</html>

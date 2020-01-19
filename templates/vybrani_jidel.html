@@ -28,18 +28,18 @@
                     <input class="order" type="submit" value="Uložit" onclick="showWaitingForLunch()"><br />
                     <small>Pro ukládání obědů musíte mít nainstalovaný Firefox nebo Chrome (Pro správnou funkčnost doporučujeme nainstalovat Firefox).</small>
                     <br />
-                    <small>Ukládání obědů může trvat až 30 sekund. Prosíme o chvilku strpení.</small>
+                    <small>Ukládání obědů může trvat až 30 sekund. Prosíme o chvilku strpení, je to komplikované.</small>
                 </div>
             {% for jidlo in meals %}
-                {% if not jidlo.startswith("A") and not jidlo.startswith("B") and not jidlo.startswith("C")  %}
-                    <h3>{{ jidlo }}</h3>
+                {% if loop.index0 == 0 or ((loop.index-1)/3) is even or ((loop.index-1)/3) is odd  %}
+                    <h3>{{ jidlo.Den.nazev }}, {{ jidlo.Den.poradi }}. {{ jidlo.Den.Mesic.poradi }}. {{ jidlo.Den.Mesic.rok }}</h3>
                     {% set count.a = count.a + 1 %}
                     </fieldset>
                     <fieldset id="group{{ count.a }}">
-                          <label for="{{ jidlo }}">
+                          <label for="{{ jidlo }}O">
                               <div class="jidlo-div">
                                   <label class="container">
-                                    <input value="4" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Odhlásit</span>
+                                    <input value="4" type="radio" id="{{ jidlo }}O" name="group{{ count.a }}"><span class="nadpis">Odhlásit</span>
                                     <span class="checkmark"></span>
                                   </label>
                                   <p>Odhlásit oběd</p>
@@ -48,26 +48,32 @@
                               </div>
                           </label>
                 {% endif %}
-                    {% if jidlo.startswith("A") %}
-                        {% if vybrane_jidla_mesic[count.a] == 1 %}
+                        {% if jidlo.nazev == " Toto jídlo se dnes nepodává" %}
+                            <label for="{{ jidlo }}">
+                            <div class="jidlo-div">
+                            <label disabled class="container">
+                                <input disabled value="{{ jidlo.cislo }}" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Oběd {{ jidlo.cislo }}</span>
+                                <span class="checkmark"></span>
+                            </label>
+                        {% elif vybrane_jidla_mesic[count.a] == jidlo.cislo %}
                             <label for="{{ jidlo }}">
                             <div class="jidlo-div-green">
                             <label class="container">
-                                <input value="1" type="radio" id="{{ jidlo }}" name="group{{ count.a }}" checked="checked"><span class="nadpis">Oběd 1</span>
+                                <input value="{{ jidlo.cislo }}" type="radio" id="{{ jidlo }}" name="group{{ count.a }}" checked="checked"><span class="nadpis">Oběd {{ jidlo.cislo }}</span>
                                 <span class="checkmark"></span>
                             </label>
                         {% else %}
                             <label for="{{ jidlo }}">
                             <div class="jidlo-div">
                             <label class="container">
-                                <input value="1" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Oběd 1</span>
+                                <input value="{{ jidlo.cislo }}" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Oběd {{ jidlo.cislo }}</span>
                                 <span class="checkmark"></span>
                             </label>
                         {% endif %}
-                            <p>{{ jidlo[1:] }}</p>
+                            <p>{{ jidlo.nazev }}</p>
                             {% set foo = [] %}
                             {% for post in posts %}
-                                {% if not foo and post.jidlo.lower() in jidlo.lower() %}
+                                {% if not foo and post.jidlo.lower() in jidlo.nazev.lower() %}
                                     {% if foo.append(True) %} {% endif %}
                                     <div class="img-rating-div">
                                         <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}"  title="{{ post.jidlo }}"/>
@@ -77,77 +83,10 @@
                                 {% endif %}
                             {% endfor %}
                             {% if not foo %}
-                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř" style="filter: brightness(100%);">
+                                <img class="jidlo-img-unknown" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř" style="filter: brightness(100%);">
                             {% endif %}
                             </div>
                             </label>
-                    {% elif jidlo.startswith("B") %}
-                        {% if vybrane_jidla_mesic[count.a] == 2 %}
-                            <label for="{{ jidlo }}">
-                            <div class="jidlo-div-green">
-                                <label class="container">
-                                    <input value="2" type="radio" id="{{ jidlo }}" name="group{{ count.a }}" checked="checked"><span class="nadpis">Oběd 2</span>
-                                    <span class="checkmark"></span>
-                                </label>
-                        {% else %}
-                            <label for="{{ jidlo }}">
-                            <div class="jidlo-div">
-                                <label class="container">
-                                    <input value="2" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Oběd 2</span>
-                                    <span class="checkmark"></span>
-                                </label>
-                        {% endif %}
-                            <p>{{ jidlo[1:] }}</p>
-                            {% set foo = [] %}
-                            {% for post in posts %}
-                                {% if not foo and post.jidlo.lower() in jidlo.lower() %}
-                                    {% if foo.append(True) %} {% endif %}
-                                        <div class="img-rating-div">
-                                            <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}"  title="{{ post.jidlo }}"/>
-                                            <span class="img-rating">{{post.rating}}/5</span>
-                                        </div>
-                                        <a style="color: #898989;" href="{{ url_for('.search', search=post.jidlo) }}"><p style="font-size: 10px;">Obrázek: {{ post.jidlo }}</p></a>
-                                {% endif %}
-                            {% endfor %}
-                            {% if not foo %}
-                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř" style="filter: brightness(100%);">
-                            {% endif %}
-                        </div>
-                        </label>
-                    {% elif jidlo.startswith("C") %}
-                        {% if vybrane_jidla_mesic[count.a] == 3 %}
-                            <label for="{{ jidlo }}">
-                            <div class="jidlo-div-green">
-                                <label class="container">
-                                    <input value="3" type="radio" id="{{ jidlo }}" name="group{{ count.a }}" checked="checked"><span class="nadpis">Oběd 3</span>
-                                    <span class="checkmark"></span>
-                                </label>
-                        {% else %}
-                            <label for="{{ jidlo }}">
-                            <div class="jidlo-div">
-                                <label class="container">
-                                    <input value="3" type="radio" id="{{ jidlo }}" name="group{{ count.a }}"><span class="nadpis">Oběd 3</span>
-                                    <span class="checkmark"></span>
-                                </label>
-                        {% endif %}
-                            <p>{{ jidlo[1:] }}</p>
-                            {% set foo = [] %}
-                            {% for post in posts %}
-                                {% if not foo and post.jidlo.lower() in jidlo.lower() %}
-                                    {% if foo.append(True) %} {% endif %}
-                                        <div class="img-rating-div">
-                                            <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='profile_pics/' + post.picture) }}" alt="{{ post.jidlo }}"  title="{{ post.jidlo }}"/>
-                                            <span class="img-rating">{{post.rating}}/5</span>
-                                        </div>
-                                        <a style="color: #898989;" href="{{ url_for('.search', search=post.jidlo) }}"><p style="font-size: 10px;">Obrázek: {{ post.jidlo }}</p></a>
-                                {% endif %}
-                            {% endfor %}
-                            {% if not foo %}
-                                <img class="jidlo-img" width="300" height="300" src="{{ url_for('static', filename='plate_unknown.png')}}" alt="Talíř" style="filter: brightness(100%);">
-                            {% endif %}
-                        </div>
-                        </label>
-                    {% endif %}
             {% endfor %}
                 <div class="jidla-submit">
                     <input class="order" type="submit" value="Uložit" onclick="showWaitingForLunch_2()"><br />
