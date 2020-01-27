@@ -1345,6 +1345,7 @@ def laugh_hlaska_action(post_id, action):
 
 @app.route("/")
 def home():
+    get_jidla()
     if current_user.is_authenticated:
         now = datetime.now()
         now_time = now.time()
@@ -1990,7 +1991,7 @@ def mod_vyz_lid():
     return render_template('index.html')
 
 
-'''def get_jidla():
+def get_jidla():
     jidla = []
 
     try:
@@ -2090,10 +2091,10 @@ def mod_vyz_lid():
 
         return jidla
     except requests.exceptions.ConnectionError:
-        return None;'''
+        return None;
 
 
-'''def dnesni_jidla():
+def dnesni_jidla():
     now = datetime.now()
     now_time = now.time()
     if current_user.icanteen or ((datetime.today().weekday() == 4 and current_user.icanteen) or (datetime.today().weekday() == 5 and current_user.icanteen) or (datetime.today().weekday() == 6 and current_user.icanteen)):
@@ -2176,7 +2177,7 @@ def mod_vyz_lid():
             else:
                 return ["Nejspíš máš špatně zadané iCanteenID nebo iCanteen heslo", "Je však taky možné, že spadly jídelně servery", "Zkontroluj zady: https://jidelna.mgo.opava.cz: 6204/faces/login.jsp"]
     else:
-        return ["Nejspíš máš špatně zadané iCanteenID nebo iCanteen heslo", "Je však taky možné, že spadly jídelně servery", "Zkontroluj zady: https://jidelna.mgo.opava.cz: 6204/faces/login.jsp"]'''
+        return ["Nejspíš máš špatně zadané iCanteenID nebo iCanteen heslo", "Je však taky možné, že spadly jídelně servery", "Zkontroluj zady: https://jidelna.mgo.opava.cz: 6204/faces/login.jsp"]
 
 
 def vybrane_jidlo():
