@@ -17,4 +17,5 @@ It is basically a simple CRUD application with star rating with comment system b
 
 
 *Please note that this was the first project using Flask I made, so the code is a mess. The page is also loading long, however there are a lot of features and I am proud of it.*
-*Please note that the website is not working properly due to the beginner programme on PythonAnywhere.com, which does not allow scraping data from other websites. Some functions might not work.*
+<br /><br />
+*Also take into account that the website is not working properly due to the beginner programme on PythonAnywhere.com, which does not allow scraping data from other websites. Some functions might not work.*
